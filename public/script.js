@@ -37,11 +37,15 @@ function sendCodeToBackend(code) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
-        document.getElementById('visualization-area').innerText = data.message;
+        if (data.error) {
+            document.getElementById('visualization-area').innerText = `Error: ${data.details}`;
+        } else {
+            document.getElementById('visualization-area').innerText = `Output:\n${data.output}`;
+        }
     })
     .catch((error) => {
         console.error('Error:', error);
         document.getElementById('visualization-area').innerText = 'Error: Unable to process the code.';
     });
 }
+
