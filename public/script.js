@@ -1,31 +1,10 @@
-const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-    lineNumbers: true,
-    mode: "text/x-c++src",
-    theme: "default",
-});
+let currentStep = 0;
+let steps = [];
 
 document.getElementById('run-btn').addEventListener('click', () => {
     const code = codeEditor.getValue();
-    console.log("Code submitted:", code);
     sendCodeToBackend(code);
 });
-
-function sendCodeToBackend(code) {
-    fetch('/run-code', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: code }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}
 
 function sendCodeToBackend(code) {
     fetch('/run-code', {
@@ -40,7 +19,9 @@ function sendCodeToBackend(code) {
         if (data.error) {
             document.getElementById('visualization-area').innerText = `Error: ${data.details}`;
         } else {
-            document.getElementById('visualization-area').innerText = `Output:\n${data.output}`;
+            steps = data.steps;
+            currentStep = 0;
+            displayStep(currentStep);
         }
     })
     .catch((error) => {
@@ -49,3 +30,23 @@ function sendCodeToBackend(code) {
     });
 }
 
+function displayStep(stepIndex) {
+    const arrayState = steps[stepIndex];
+    const visualizationArea = document.getElementById('visualization-area');
+    visualizationArea.innerHTML = '';
+
+    arrayState.forEach((value, index) => {
+        const bar = document.createElement('div');
+        bar.className = 'array-bar';
+        bar.style.height = `${value * 20}px`;
+        bar.innerText = value;
+        visualizationArea.appendChild(bar);
+    });
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    if (currentStep < steps.length - 1) {
+        currentStep++;
+        displayStep(currentStep);
+    }
+});

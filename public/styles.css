@@ -43,4 +43,16 @@ button {
     height: 300px;
     margin-top: 1em;
     padding: 1em;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+}
+
+.array-bar {
+    width: 30px;
+    background-color: #4CAF50;
+    text-align: center;
+    color: white;
+    margin: 0 5px;
+    font-size: 14px;
 }

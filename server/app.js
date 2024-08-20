@@ -23,29 +23,24 @@ app.post('/run-code', (req, res) => {
         fs.mkdirSync(tempDir);
     }
 
-    fs.writeFile(cppFilePath, code, (err) => {
-        if (err) {
-            console.error('Error writing file:', err);
-            return res.status(500).json({ error: 'Failed to save code file' });
+    function simulateBubbleSort() {
+        let array = [5, 3, 8, 4, 2];
+        let steps = [];
+
+        for (let i = 0; i < array.length - 1; i++) {
+            for (let j = 0; j < array.length - i - 1; j++) {
+                if (array[j] > array[j + 1]) {
+                    [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                }
+                steps.push([...array]); 
+            }
         }
 
-        exec(`g++ ${cppFilePath} -o ${outputFilePath}`, (compileErr, stdout, stderr) => {
-            if (compileErr) {
-                console.error('Compilation error:', stderr);
-                return res.status(400).json({ error: 'Compilation failed', details: stderr });
-            }
+        return steps;
+    }
 
-            exec(outputFilePath, (runErr, runStdout, runStderr) => {
-                if (runErr) {
-                    console.error('Execution error:', runStderr);
-                    return res.status(400).json({ error: 'Execution failed', details: runStderr });
-                }
-
-                console.log('Execution output:', runStdout);
-                res.json({ output: runStdout });
-            });
-        });
-    });
+    const steps = simulateBubbleSort();
+    res.json({ steps: steps });
 });
 
 
