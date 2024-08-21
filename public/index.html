@@ -8,34 +8,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>C++ Algorithm Visualizer</h1>
-        
-        <div class="input-section">
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Settings</h2>
+            <label for="algorithm-select">Choose Algorithm:</label>
+            <select id="algorithm-select">
+                <option value="bubble-sort">Bubble Sort</option>
+                <option value="selection-sort">Selection Sort</option>
+                <!-- Add more algorithms here -->
+            </select>
             <textarea id="code-editor" rows="10" cols="50">int main() { return 0; }</textarea>
             <input id="array-input" type="text" placeholder="Enter array (comma-separated, e.g., 5,3,8,4,2)">
             <button id="run-btn">Run</button>
-        </div>
-        
-        <div class="visualization-controls">
-            <button id="next-btn">Next Step</button>
-            <button id="pause-btn">Pause</button>
-            <button id="reset-btn">Reset</button>
-        </div>
+        </aside>
 
-        <div id="visualization-area" class="visualization-area"></div>
+        <div class="content-area">
+            <div class="visualization-controls">
+                <button id="next-btn">Next Step</button>
+                <button id="pause-btn">Pause</button>
+                <button id="reset-btn">Reset</button>
+            </div>
+            <div id="visualization-area" class="visualization-area"></div>
+        </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
-    <script>
-        const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-            lineNumbers: true,
-            mode: "text/x-c++src",
-            theme: "default"
-        });
-    </script>
-    <script src="script.js"></script>
-</body>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+<script>
+    const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+        lineNumbers: true,
+        mode: "text/x-c++src",
+        theme: "default"
+    });
+</script>
+<script src="script.js"></script>
+
 </body>
 </html>

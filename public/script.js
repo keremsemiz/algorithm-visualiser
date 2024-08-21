@@ -1,10 +1,13 @@
 let currentStep = 0;
 let steps = [];
-let interval = null;
-let isPaused = true;
+let selectedAlgorithm = 'bubble-sort';
+
+document.getElementById('algorithm-select').addEventListener('change', (event) => {
+    selectedAlgorithm = event.target.value;
+});
 
 document.getElementById('run-btn').addEventListener('click', () => {
-    const code = codeEditor.getValue();
+    const code = document.getElementById('code-editor').value; 
     const arrayInput = document.getElementById('array-input').value;
     const array = arrayInput.split(',').map(Number);
     if (array.some(isNaN)) {
@@ -20,7 +23,7 @@ function sendCodeToBackend(code, array) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: code, array: array }),
+        body: JSON.stringify({ code: code, array: array, algorithm: selectedAlgorithm }),
     })
     .then(response => response.json())
     .then(data => {
@@ -30,7 +33,6 @@ function sendCodeToBackend(code, array) {
             steps = data.steps;
             currentStep = 0;
             displayStep(currentStep);
-            isPaused = false;
         }
     })
     .catch((error) => {
@@ -52,19 +54,19 @@ function displayStep(stepIndex) {
         bar.style.height = `${value * 20}px`;
         bar.innerText = value;
         
+
         if (stepIndex > 0) {
             const previousArrayState = steps[stepIndex - 1];
             if (previousArrayState[index] !== value) {
-                bar.style.backgroundColor = 'red';
+                bar.classList.add('red'); 
             } else {
-                bar.style.backgroundColor = 'green';
+                bar.classList.add('green'); 
             }
         }
         
         visualizationArea.appendChild(bar);
     });
 }
-
 
 document.getElementById('next-btn').addEventListener('click', () => {
     if (currentStep < steps.length - 1) {
@@ -73,16 +75,4 @@ document.getElementById('next-btn').addEventListener('click', () => {
     } else {
         alert('Sorting Complete! The array is fully sorted.');
     }
-});
-
-document.getElementById('pause-btn').addEventListener('click', () => {
-    isPaused = true;
-    clearInterval(interval);
-});
-
-document.getElementById('reset-btn').addEventListener('click', () => {
-    isPaused = true;
-    currentStep = 0;
-    displayStep(currentStep);
-    clearInterval(interval);
 });

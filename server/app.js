@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.post('/run-code', (req, res) => {
     const code = req.body.code;
     const array = req.body.array || [5, 3, 8, 4, 2];
+    const algorithm = req.body.algorithm || 'bubble-sort';
     const tempDir = path.join(__dirname, 'temp');
     const cppFilePath = path.join(tempDir, 'temp.cpp');
     const outputFilePath = path.join(tempDir, 'temp.out');
@@ -21,31 +22,65 @@ app.post('/run-code', (req, res) => {
         fs.mkdirSync(tempDir);
     }
 
-    const modifiedCode = `
-        #include <iostream>
-        using namespace std;
-        void bubbleSort(int arr[], int n) {
-            for (int i = 0; i < n-1; i++) {
-                for (int j = 0; j < n-i-1; j++) {
-                    if (arr[j] > arr[j+1]) {
-                        int temp = arr[j];
-                        arr[j] = arr[j+1];
-                        arr[j+1] = temp;
+    let modifiedCode;
+
+    if (algorithm === 'bubble-sort') {
+        modifiedCode = `
+            #include <iostream>
+            using namespace std;
+            void bubbleSort(int arr[], int n) {
+                for (int i = 0; i < n-1; i++) {
+                    for (int j = 0; j < n-i-1; j++) {
+                        if (arr[j] > arr[j+1]) {
+                            int temp = arr[j];
+                            arr[j] = arr[j+1];
+                            arr[j+1] = temp;
+                        }
+                        for (int k = 0; k < n; k++) {
+                            cout << arr[k] << " ";
+                        }
+                        cout << endl;
                     }
+                }
+            }
+            int main() {
+                int arr[] = {${array.join(',')}};
+                int n = sizeof(arr)/sizeof(arr[0]);
+                bubbleSort(arr, n);
+                return 0;
+            }
+        `;
+    } else if (algorithm === 'selection-sort') {
+        modifiedCode = `
+            #include <iostream>
+            using namespace std;
+            void selectionSort(int arr[], int n) {
+                for (int i = 0; i < n-1; i++) {
+                    int min_idx = i;
+                    for (int j = i+1; j < n; j++) {
+                        if (arr[j] < arr[min_idx]) {
+                            min_idx = j;
+                        }
+                    }
+                    int temp = arr[min_idx];
+                    arr[min_idx] = arr[i];
+                    arr[i] = temp;
                     for (int k = 0; k < n; k++) {
                         cout << arr[k] << " ";
                     }
                     cout << endl;
                 }
             }
-        }
-        int main() {
-            int arr[] = {${array.join(',')}};
-            int n = sizeof(arr)/sizeof(arr[0]);
-            bubbleSort(arr, n);
-            return 0;
-        }
-    `;
+            int main() {
+                int arr[] = {${array.join(',')}};
+                int n = sizeof(arr)/sizeof(arr[0]);
+                selectionSort(arr, n);
+                return 0;
+            }
+        `;
+    } else {
+        return res.status(400).json({ error: 'Unsupported algorithm selected' });
+    }
 
     fs.writeFile(cppFilePath, modifiedCode, (err) => {
         if (err) {
