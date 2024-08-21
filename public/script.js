@@ -71,7 +71,7 @@ function displayStep(stepIndex) {
             if (previousArrayState[index] !== value) {
                 bar.classList.add('red');
             } else {
-                bar.classList.add('green'); 
+                bar.classList.add('green');
             }
         }
         
@@ -91,6 +91,13 @@ function autoPlaySteps() {
 
 document.getElementById('next-btn').addEventListener('click', () => {
     autoPlaySteps();
+});
+
+document.getElementById('back-btn').addEventListener('click', () => {
+    if (currentStep > 0) {
+        currentStep--;
+        displayStep(currentStep);
+    }
 });
 
 document.getElementById('pause-btn').addEventListener('click', () => {
