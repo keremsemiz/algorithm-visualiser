@@ -1,15 +1,3 @@
-const fs = require('fs');
-const { exec } = require('child_process');
-const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(express.static(path.join(__dirname, '../public')));
-app.use(bodyParser.json());
-
 app.post('/run-code', (req, res) => {
     const code = req.body.code;
     const array = req.body.array || [5, 3, 8, 4, 2];
@@ -75,6 +63,70 @@ app.post('/run-code', (req, res) => {
                 int arr[] = {${array.join(',')}};
                 int n = sizeof(arr)/sizeof(arr[0]);
                 selectionSort(arr, n);
+                return 0;
+            }
+        `;
+    } else if (algorithm === 'insertion-sort') {
+        modifiedCode = `
+            #include <iostream>
+            using namespace std;
+            void insertionSort(int arr[], int n) {
+                for (int i = 1; i < n; i++) {
+                    int key = arr[i];
+                    int j = i - 1;
+                    while (j >= 0 && arr[j] > key) {
+                        arr[j + 1] = arr[j];
+                        j = j - 1;
+                    }
+                    arr[j + 1] = key;
+                    for (int k = 0; k < n; k++) {
+                        cout << arr[k] << " ";
+                    }
+                    cout << endl;
+                }
+            }
+            int main() {
+                int arr[] = {${array.join(',')}};
+                int n = sizeof(arr)/sizeof(arr[0]);
+                insertionSort(arr, n);
+                return 0;
+            }
+        `;
+    } else if (algorithm === 'quick-sort') {
+        modifiedCode = `
+            #include <iostream>
+            using namespace std;
+            void quickSort(int arr[], int low, int high) {
+                if (low < high) {
+                    int pi = partition(arr, low, high);
+                    quickSort(arr, low, pi - 1);
+                    quickSort(arr, pi + 1, high);
+                }
+            }
+            int partition(int arr[], int low, int high) {
+                int pivot = arr[high];
+                int i = (low - 1);
+                for (int j = low; j <= high - 1; j++) {
+                    if (arr[j] < pivot) {
+                        i++;
+                        int temp = arr[i];
+                        arr[i] = arr[j];
+                        arr[j] = temp;
+                    }
+                }
+                int temp = arr[i + 1];
+                arr[i + 1] = arr[high];
+                arr[high] = temp;
+                for (int k = 0; k < high + 1; k++) {
+                    cout << arr[k] << " ";
+                }
+                cout << endl;
+                return (i + 1);
+            }
+            int main() {
+                int arr[] = {${array.join(',')}};
+                int n = sizeof(arr)/sizeof(arr[0]);
+                quickSort(arr, 0, n - 1);
                 return 0;
             }
         `;

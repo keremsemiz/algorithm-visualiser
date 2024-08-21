@@ -1,15 +1,21 @@
 let currentStep = 0;
 let steps = [];
 let selectedAlgorithm = 'bubble-sort';
+let speed = 1000;
 
 document.getElementById('algorithm-select').addEventListener('change', (event) => {
     selectedAlgorithm = event.target.value;
 });
 
+document.getElementById('speed-control').addEventListener('input', (event) => {
+    speed = event.target.value;
+});
+
 document.getElementById('run-btn').addEventListener('click', () => {
-    const code = document.getElementById('code-editor').value; 
+    const code = document.getElementById('code-editor').value;
     const arrayInput = document.getElementById('array-input').value;
     const array = arrayInput.split(',').map(Number);
+    
     if (array.some(isNaN)) {
         alert('Please enter a valid array of numbers.');
         return;
@@ -18,6 +24,9 @@ document.getElementById('run-btn').addEventListener('click', () => {
 });
 
 function sendCodeToBackend(code, array) {
+    const feedbackElement = document.getElementById('feedback');
+    feedbackElement.innerText = "Processing your code...";
+    
     fetch('/run-code', {
         method: 'POST',
         headers: {
@@ -28,8 +37,10 @@ function sendCodeToBackend(code, array) {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            document.getElementById('visualization-area').innerText = `Error: ${data.details}`;
+            feedbackElement.innerText = `Error: ${data.details}`;
+            document.getElementById('visualization-area').innerText = '';
         } else {
+            feedbackElement.innerText = "Visualization ready. Click 'Next Step' to proceed.";
             steps = data.steps;
             currentStep = 0;
             displayStep(currentStep);
@@ -37,7 +48,8 @@ function sendCodeToBackend(code, array) {
     })
     .catch((error) => {
         console.error('Error:', error);
-        document.getElementById('visualization-area').innerText = 'Error: Unable to process the code.';
+        feedbackElement.innerText = 'Error: Unable to process the code.';
+        document.getElementById('visualization-area').innerText = '';
     });
 }
 
@@ -54,11 +66,10 @@ function displayStep(stepIndex) {
         bar.style.height = `${value * 20}px`;
         bar.innerText = value;
         
-
         if (stepIndex > 0) {
             const previousArrayState = steps[stepIndex - 1];
             if (previousArrayState[index] !== value) {
-                bar.classList.add('red'); 
+                bar.classList.add('red');
             } else {
                 bar.classList.add('green'); 
             }
@@ -68,11 +79,27 @@ function displayStep(stepIndex) {
     });
 }
 
-document.getElementById('next-btn').addEventListener('click', () => {
+function autoPlaySteps() {
     if (currentStep < steps.length - 1) {
         currentStep++;
         displayStep(currentStep);
+        setTimeout(autoPlaySteps, speed);
     } else {
-        alert('Sorting Complete! The array is fully sorted.');
+        document.getElementById('feedback').innerText = 'Sorting Complete!';
     }
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+    autoPlaySteps();
+});
+
+document.getElementById('pause-btn').addEventListener('click', () => {
+    clearTimeout(autoPlaySteps);
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    clearTimeout(autoPlaySteps);
+    currentStep = 0;
+    displayStep(currentStep);
+    document.getElementById('feedback').innerText = "Reset complete. You can start again.";
 });
