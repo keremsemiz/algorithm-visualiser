@@ -8,33 +8,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
 </head>
 <body>
-    <header>
+    <div class="container">
         <h1>C++ Algorithm Visualizer</h1>
-    </header>
-    
-    <main>
-        <section id="code-input">
-            <h2>Input Your C++ Code</h2>
-            <textarea id="code-editor" rows="15" placeholder="Enter your C++ code here..."></textarea>
+        
+        <div class="input-section">
+            <textarea id="code-editor" rows="10" cols="50">int main() { return 0; }</textarea>
             <input id="array-input" type="text" placeholder="Enter array (comma-separated, e.g., 5,3,8,4,2)">
             <button id="run-btn">Run</button>
-        </section>
+        </div>
         
-        
-        <section id="visualization">
-            <h2>Visualization</h2>
-            <div id="visualization-area">
-            </div>
+        <div class="visualization-controls">
             <button id="next-btn">Next Step</button>
             <button id="pause-btn">Pause</button>
             <button id="reset-btn">Reset</button>
-        </section>
-        
-        
-    </main>
+        </div>
+
+        <div id="visualization-area" class="visualization-area"></div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/clike/clike.min.js"></script>
+    <script>
+        const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+            lineNumbers: true,
+            mode: "text/x-c++src",
+            theme: "default"
+        });
+    </script>
     <script src="script.js"></script>
+</body>
 </body>
 </html>

@@ -46,21 +46,32 @@ function displayStep(stepIndex) {
     const visualizationArea = document.getElementById('visualization-area');
     visualizationArea.innerHTML = '';
 
-    arrayState.forEach((value) => {
+    arrayState.forEach((value, index) => {
         const bar = document.createElement('div');
         bar.className = 'array-bar';
-        bar.style.height = `${value * 20}px`; 
+        bar.style.height = `${value * 20}px`;
         bar.innerText = value;
+        
+        if (stepIndex > 0) {
+            const previousArrayState = steps[stepIndex - 1];
+            if (previousArrayState[index] !== value) {
+                bar.style.backgroundColor = 'red';
+            } else {
+                bar.style.backgroundColor = 'green';
+            }
+        }
+        
         visualizationArea.appendChild(bar);
     });
 }
+
 
 document.getElementById('next-btn').addEventListener('click', () => {
     if (currentStep < steps.length - 1) {
         currentStep++;
         displayStep(currentStep);
     } else {
-        alert('No more steps.');
+        alert('Sorting Complete! The array is fully sorted.');
     }
 });
 
