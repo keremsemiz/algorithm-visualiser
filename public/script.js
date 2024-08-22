@@ -23,6 +23,12 @@ document.getElementById('run-btn').addEventListener('click', () => {
     sendCodeToBackend(code, array);
 });
 
+document.getElementById('random-btn').addEventListener('click', () => {
+    const arraySize = 10;
+    const randomArray = Array.from({ length: arraySize }, () => Math.floor(Math.random() * 100));
+    document.getElementById('array-input').value = randomArray.join(',');
+});
+
 function sendCodeToBackend(code, array) {
     const feedbackElement = document.getElementById('feedback');
     feedbackElement.innerText = "Processing your code...";
@@ -64,6 +70,7 @@ function displayStep(stepIndex) {
         const bar = document.createElement('div');
         bar.className = 'array-bar';
         bar.style.height = `${value * 20}px`;
+        bar.style.transition = 'height 0.5s ease-in-out, background-color 0.5s ease';
         bar.innerText = value;
         
         if (stepIndex > 0) {
