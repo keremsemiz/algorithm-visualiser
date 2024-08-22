@@ -2,6 +2,7 @@ let currentStep = 0;
 let steps = [];
 let selectedAlgorithm = 'bubble-sort';
 let speed = 1000;
+let setMode = '';
 
 document.getElementById('algorithm-select').addEventListener('change', (event) => {
     selectedAlgorithm = event.target.value;
@@ -47,14 +48,14 @@ document.getElementById('run-pathfinding-btn').addEventListener('click', () => {
 });
 
 function toggleAlgorithmView(algorithm) {
-    document.getElementById('sorting-container').classList.add('hidden');
-    document.getElementById('pathfinding-container').classList.add('hidden');
+    document.getElementById('sorting-container').style.display = 'none';
+    document.getElementById('pathfinding-container').style.display = 'none';
 
     if (algorithm === 'pathfinding') {
-        document.getElementById('pathfinding-container').classList.remove('hidden');
+        document.getElementById('pathfinding-container').style.display = 'block';
         createGrid();
     } else {
-        document.getElementById('sorting-container').classList.remove('hidden');
+        document.getElementById('sorting-container').style.display = 'block';
     }
 }
 
