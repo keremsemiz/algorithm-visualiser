@@ -66,7 +66,7 @@ function runAStar(grid) {
         steps.push(closedSet.map(node => [node.row, node.col, 'visited']));
     }
 
-    return [];
+    return []; 
 }
 
 function findNode(grid, type) {
@@ -77,6 +77,7 @@ function findNode(grid, type) {
             }
         }
     }
+    return null;
 }
 
 function getNeighbors(node, grid) {

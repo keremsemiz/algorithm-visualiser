@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,14 +27,7 @@
     </header>
 
     <div id="sorting-container">
-        <textarea id="code-editor" rows="10" cols="50">int main() { return 0; }</textarea>
-        <input id="array-input" type="text" placeholder="Enter array (comma-separated, e.g., 5,3,8,4,2)">
-        <button id="random-btn">Generate Random Array</button>
-        <div class="visualization-controls">
-            <button id="next-btn">Next Step</button>
-            <button id="back-btn">Previous Step</button>
-        </div>
-        <div id="visualization-area" class="visualization-area"></div>
+
     </div>
 
     <div id="pathfinding-container" class="hidden">
@@ -43,11 +37,10 @@
             <button id="set-obstacle-btn">Set Obstacles</button>
             <button id="run-pathfinding-btn">Run Pathfinding</button>
         </div>
-        <div class="grid-container" id="grid-container"></div>
+        <div id="grid-container" class="grid-container"></div>
     </div>
-    
+
     <div id="feedback" class="feedback"></div>
-    
 
     <script src="script.js"></script>
 </body>
