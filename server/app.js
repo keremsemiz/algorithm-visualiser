@@ -1,5 +1,3 @@
-const fs = require('fs');
-const { exec } = require('child_process');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -10,261 +8,109 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.json());
 
-app.post('/run-code', (req, res) => {
-    const code = req.body.code;
-    const array = req.body.array || [5, 3, 8, 4, 2];
-    const algorithm = req.body.algorithm || 'bubble-sort';
-    const tempDir = path.join(__dirname, 'temp');
-    const cppFilePath = path.join(tempDir, 'temp.cpp');
-    const outputFilePath = path.join(tempDir, 'temp.out');
+app.post('/run-pathfinding', (req, res) => {
+    const grid = req.body.grid;
+    const steps = runAStar(grid);
+    res.json({ steps });
+});
 
-    if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir);
-    }
+function runAStar(grid) {
+    const numRows = grid.length;
+    const numCols = grid[0].length;
 
-    let modifiedCode;
+    const startNode = findNode(grid, 'S');
+    const endNode = findNode(grid, 'E');
 
-    if (algorithm === 'bubble-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void bubbleSort(int arr[], int n) {
-                for (int i = 0; i < n-1; i++) {
-                    for (int j = 0; j < n-i-1; j++) {
-                        if (arr[j] > arr[j+1]) {
-                            int temp = arr[j];
-                            arr[j] = arr[j+1];
-                            arr[j+1] = temp;
-                        }
-                        for (int k = 0; k < n; k++) {
-                            cout << arr[k] << " ";
-                        }
-                        cout << endl;
-                    }
-                }
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr)/sizeof(arr[0]);
-                bubbleSort(arr, n);
-                return 0;
-            }
-        `;
-    } else if (algorithm === 'selection-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void selectionSort(int arr[], int n) {
-                for (int i = 0; i < n-1; i++) {
-                    int min_idx = i;
-                    for (int j = i+1; j < n; j++) {
-                        if (arr[j] < arr[min_idx]) {
-                            min_idx = j;
-                        }
-                    }
-                    int temp = arr[min_idx];
-                    arr[min_idx] = arr[i];
-                    arr[i] = temp;
-                    for (int k = 0; k < n; k++) {
-                        cout << arr[k] << " ";
-                    }
-                    cout << endl;
-                }
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr)/sizeof(arr[0]);
-                selectionSort(arr, n);
-                return 0;
-            }
-        `;
-    } else if (algorithm === 'insertion-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void insertionSort(int arr[], int n) {
-                for (int i = 1; i < n; i++) {
-                    int key = arr[i];
-                    int j = i - 1;
-                    while (j >= 0 && arr[j] > key) {
-                        arr[j + 1] = arr[j];
-                        j = j - 1;
-                    }
-                    arr[j + 1] = key;
-                    for (int k = 0; k < n; k++) {
-                        cout << arr[k] << " ";
-                    }
-                    cout << endl;
-                }
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr)/sizeof(arr[0]);
-                insertionSort(arr, n);
-                return 0;
-            }
-        `;
-    } else if (algorithm === 'quick-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void quickSort(int arr[], int low, int high) {
-                if (low < high) {
-                    int pi = partition(arr, low, high);
-                    quickSort(arr, low, pi - 1);
-                    quickSort(arr, pi + 1, high);
-                }
-            }
-            int partition(int arr[], int low, int high) {
-                int pivot = arr[high];
-                int i = (low - 1);
-                for (int j = low; j <= high - 1; j++) {
-                    if (arr[j] < pivot) {
-                        i++;
-                        int temp = arr[i];
-                        arr[i] = arr[j];
-                        arr[j] = temp;
-                    }
-                }
-                int temp = arr[i + 1];
-                arr[i + 1] = arr[high];
-                arr[high] = temp;
-                for (int k = 0; k < high + 1; k++) {
-                    cout << arr[k] << " ";
-                }
-                cout << endl;
-                return (i + 1);
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr)/sizeof(arr[0]);
-                quickSort(arr, 0, n - 1);
-                return 0;
-            }
-        `;
-    } else if (algorithm === 'merge-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void merge(int arr[], int l, int m, int r) {
-                int n1 = m - l + 1;
-                int n2 = r - m;
-                int L[n1], R[n2];
-                for (int i = 0; i < n1; i++) {
-                    L[i] = arr[l + i];
-                }
-                for (int j = 0; j < n2; j++) {
-                    R[j] = arr[m + 1 + j];
-                }
-                int i = 0, j = 0, k = l;
-                while (i < n1 && j < n2) {
-                    if (L[i] <= R[j]) {
-                        arr[k] = L[i];
-                        i++;
-                    } else {
-                        arr[k] = R[j];
-                        j++;
-                    }
-                    k++;
-                }
-                while (i < n1) {
-                    arr[k] = L[i];
-                    i++;
-                    k++;
-                }
-                while (j < n2) {
-                    arr[k] = R[j];
-                    j++;
-                    k++;
-                }
-                for (int p = l; p <= r; p++) {
-                    cout << arr[p] << " ";
-                }
-                cout << endl;
-            }
-            void mergeSort(int arr[], int l, int r) {
-                if (l < r) {
-                    int m = l + (r - l) / 2;
-                    mergeSort(arr, l, m);
-                    mergeSort(arr, m + 1, r);
-                    merge(arr, l, m, r);
-                }
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr) / sizeof(arr[0]);
-                mergeSort(arr, 0, n - 1);
-                return 0;
-            }
-        `;
-    } else if (algorithm === 'heap-sort') {
-        modifiedCode = `
-            #include <iostream>
-            using namespace std;
-            void heapify(int arr[], int n, int i) {
-                int largest = i;
-                int left = 2 * i + 1;
-                int right = 2 * i + 2;
-                if (left < n && arr[left] > arr[largest])
-                    largest = left;
-                if (right < n && arr[right] > arr[largest])
-                    largest = right;
-                if (largest != i) {
-                    int swap = arr[i];
-                    arr[i] = arr[largest];
-                    arr[largest] = swap;
-                    heapify(arr, n, largest);
-                }
-            }
-            void heapSort(int arr[], int n) {
-                for (int i = n / 2 - 1; i >= 0; i--)
-                    heapify(arr, n, i);
-                for (int i = n - 1; i > 0; i--) {
-                    int temp = arr[0];
-                    arr[0] = arr[i];
-                    arr[i] = temp;
-                    heapify(arr, i, 0);
-                    for (int k = 0; k < n; k++) {
-                        cout << arr[k] << " ";
-                    }
-                    cout << endl;
-                }
-            }
-            int main() {
-                int arr[] = {${array.join(',')}};
-                int n = sizeof(arr) / sizeof(arr[0]);
-                heapSort(arr, n);
-                return 0;
-            }
-        `;
-    } else {
-        return res.status(400).json({ error: 'Unsupported algorithm selected' });
-    }
+    const openSet = [startNode];
+    const closedSet = [];
+    const cameFrom = {};
+    const gScore = createGrid(numRows, numCols, Infinity);
+    const fScore = createGrid(numRows, numCols, Infinity);
 
-    fs.writeFile(cppFilePath, modifiedCode, (err) => {
-        if (err) {
-            console.error('Error writing file:', err);
-            return res.status(500).json({ error: 'Failed to save code file' });
+    gScore[startNode.row][startNode.col] = 0;
+    fScore[startNode.row][startNode.col] = heuristic(startNode, endNode);
+
+    const steps = [];
+
+    while (openSet.length > 0) {
+        const current = openSet.reduce((lowest, node) => 
+            fScore[node.row][node.col] < fScore[lowest.row][lowest.col] ? node : lowest
+        );
+
+        if (current.row === endNode.row && current.col === endNode.col) {
+            return reconstructPath(cameFrom, current, steps);
         }
 
-        exec(`g++ ${cppFilePath} -o ${outputFilePath}`, (compileErr, stdout, stderr) => {
-            if (compileErr) {
-                console.error('Compilation error:', stderr);
-                return res.status(400).json({ error: 'Compilation failed', details: stderr });
+        openSet.splice(openSet.indexOf(current), 1);
+        closedSet.push(current);
+
+        const neighbors = getNeighbors(current, grid);
+        neighbors.forEach(neighbor => {
+            if (closedSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
+                return;
             }
 
-            exec(outputFilePath, (runErr, runStdout, runStderr) => {
-                if (runErr) {
-                    console.error('Execution error:', runStderr);
-                    return res.status(400).json({ error: 'Execution failed', details: runStderr });
-                }
+            const tentativeGScore = gScore[current.row][current.col] + 1;
 
-                const steps = runStdout.trim().split('\n').map(line => line.split(' ').map(Number));
-                res.json({ steps: steps });
-            });
+            if (!openSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
+                openSet.push(neighbor);
+            } else if (tentativeGScore >= gScore[neighbor.row][neighbor.col]) {
+                return;
+            }
+
+            cameFrom[`${neighbor.row},${neighbor.col}`] = current;
+            gScore[neighbor.row][neighbor.col] = tentativeGScore;
+            fScore[neighbor.row][neighbor.col] = gScore[neighbor.row][neighbor.col] + heuristic(neighbor, endNode);
         });
+
+        steps.push(closedSet.map(node => [node.row, node.col, 'visited']));
+    }
+
+    return []; // No path found
+}
+
+function findNode(grid, type) {
+    for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
+            if (grid[row][col] === type) {
+                return { row, col };
+            }
+        }
+    }
+}
+
+function getNeighbors(node, grid) {
+    const { row, col } = node;
+    const neighbors = [];
+
+    if (row > 0 && grid[row - 1][col] !== 'O') neighbors.push({ row: row - 1, col });
+    if (row < grid.length - 1 && grid[row + 1][col] !== 'O') neighbors.push({ row: row + 1, col });
+    if (col > 0 && grid[row][col - 1] !== 'O') neighbors.push({ row, col: col - 1 });
+    if (col < grid[0].length - 1 && grid[row][col + 1] !== 'O') neighbors.push({ row, col: col + 1 });
+
+    return neighbors;
+}
+
+function heuristic(nodeA, nodeB) {
+    return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
+}
+
+function createGrid(rows, cols, initialValue) {
+    return Array.from({ length: rows }, () => Array(cols).fill(initialValue));
+}
+
+function reconstructPath(cameFrom, current, steps) {
+    const totalPath = [current];
+    while (`${current.row},${current.col}` in cameFrom) {
+        current = cameFrom[`${current.row},${current.col}`];
+        totalPath.push(current);
+    }
+    totalPath.reverse();
+    totalPath.forEach(node => {
+        steps.push([[node.row, node.col, 'path']]);
     });
-});
+    return steps;
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
