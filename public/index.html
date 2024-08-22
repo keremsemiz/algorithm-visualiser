@@ -3,57 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ Algorithm Visualizer</title>
+    <title>Algorithm Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
 </head>
 <body>
     <header>
-        <h1>C++ Algorithm Visualizer</h1>
-    </header>
-
-    <div class="main-container">
-        <aside class="sidebar">
-            <h2>Settings</h2>
+        <h1>Algorithm Visualizer</h1>
+        <div class="controls">
             <label for="algorithm-select">Choose Algorithm:</label>
             <select id="algorithm-select">
                 <option value="bubble-sort">Bubble Sort</option>
                 <option value="selection-sort">Selection Sort</option>
                 <option value="insertion-sort">Insertion Sort</option>
-                <option value="quick-sort">Quick Sort </option>
-
+                <option value="quick-sort">Quick Sort</option>
+                <option value="merge-sort">Merge Sort</option>
+                <option value="heap-sort">Heap Sort</option>
+                <option value="pathfinding">Shortest Path</option>
             </select>
-            <textarea id="code-editor" rows="10" cols="50">int main() { return 0; }</textarea>
-            <input id="array-input" type="text" placeholder="Enter array (comma-separated, e.g., 5,3,8,4,2)">
             <button id="run-btn">Run</button>
-
-            <div id="feedback" class="feedback"></div>
-
-        </aside>
-
-        <div class="content-area">
-            <div class="visualization-controls">
-                <button id="next-btn">Next Step</button>
-                <button id="pause-btn">Pause</button>
-                <button id="reset-btn">Reset</button>
-                <label for="speed-control">Speed: </label>
-                <input type="range" id="speed-control" min="100" max="2000" step="100" value="1000">
-            </div>
-            <div id="visualization-area" class="visualization-area"></div>
+            <button id="reset-btn">Reset</button>
+            <input type="range" id="speed-control" min="100" max="2000" step="100" value="1000">
         </div>
+    </header>
+
+    <div id="sorting-container">
+        <textarea id="code-editor" rows="10" cols="50">int main() { return 0; }</textarea>
+        <input id="array-input" type="text" placeholder="Enter array (comma-separated, e.g., 5,3,8,4,2)">
+        <button id="random-btn">Generate Random Array</button>
+        <div class="visualization-controls">
+            <button id="next-btn">Next Step</button>
+            <button id="back-btn">Previous Step</button>
+        </div>
+        <div id="visualization-area" class="visualization-area"></div>
     </div>
 
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-<script>
-    const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
-        lineNumbers: true,
-        mode: "text/x-c++src",
-        theme: "default"
-    });
-</script>
-<script src="script.js"></script>
-
+    <div id="pathfinding-container" class="hidden">
+        <div class="controls">
+            <button id="set-start-btn">Set Start</button>
+            <button id="set-end-btn">Set End</button>
+            <button id="set-obstacle-btn">Set Obstacles</button>
+            <button id="run-pathfinding-btn">Run Pathfinding</button>
+        </div>
+        <div class="grid-container" id="grid-container"></div>
+    </div>
+    
+    <div id="feedback" class="feedback"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script>
+        const codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor'), {
+            lineNumbers: true,
+            mode: "text/x-c++src",
+            theme: "default"
+        });
+    </script>
+    <script src="script.js"></script>
 </body>
 </html>
