@@ -4,8 +4,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let currentStep = 0;
     let steps = [];
     let selectedAlgorithm = 'bubble-sort';
-    let speed = 1000;
+    let speed = 50;
     let setMode = '';
+
+    const resetBtn = document.getElementById('reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            console.log("Reset button clicked");
+            resetGrid();
+        });
+    } else {
+        console.error("Element 'reset-btn' not found");
+    }
+
+    function resetGrid() {
+        document.querySelectorAll('.grid-cell').forEach(cell => {
+            cell.className = 'grid-cell';
+        });
+        console.log("Grid has been reset");
+    }
 
     document.getElementById('algorithm-select').addEventListener('change', (event) => {
         selectedAlgorithm = event.target.value;
@@ -67,22 +84,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function createGrid() {
         const gridContainer = document.getElementById('grid-container');
         gridContainer.innerHTML = '';
-
-        for (let i = 0; i < 20 * 20; i++) { 
-            const cell = document.createElement('div');
-            cell.classList.add('grid-cell');
-            cell.addEventListener('click', () => {
-                if (setMode === 'start') {
-                    clearCells('start');
-                    cell.classList.add('start');
-                } else if (setMode === 'end') {
-                    clearCells('end');
-                    cell.classList.add('end');
-                } else if (setMode === 'obstacle') {
-                    cell.classList.toggle('obstacle');
-                }
-            });
-            gridContainer.appendChild(cell);
+    
+        const numRows = 20;
+        const numCols = 20;
+    
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                const cell = document.createElement('div');
+                cell.classList.add('grid-cell');
+                cell.dataset.row = row;
+                cell.dataset.col = col;
+    
+                cell.addEventListener('click', () => {
+                    if (setMode === 'start') {
+                        clearCells('start');
+                        cell.classList.add('start');
+                    } else if (setMode === 'end') {
+                        clearCells('end');
+                        cell.classList.add('end');
+                    } else if (setMode === 'obstacle') {
+                        cell.classList.toggle('obstacle');
+                    }
+                });
+    
+                gridContainer.appendChild(cell);
+            }
         }
     }
 
@@ -121,8 +147,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function runPathfinding() {
-        console.log("Run Pathfinding clicked");
-
+        console.log("Run Pathfinding function triggered");
+    
         const grid = [];
         document.querySelectorAll('.grid-cell').forEach((cell, index) => {
             const row = Math.floor(index / 20);
@@ -140,9 +166,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 grid[row][col] = ' ';
             }
         });
-
-        console.log("Grid sent to server:", grid);
-
+    
+        console.log("Grid prepared for server:", grid);
+    
         fetch('/run-pathfinding', {
             method: 'POST',
             headers: {
@@ -164,6 +190,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('feedback').innerText = 'Error: Unable to process the request.';
         });
     }
+    
 
     function visualizePathfinding(steps) {
         steps.forEach((step, index) => {

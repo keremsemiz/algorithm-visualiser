@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algorithm Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Algorithm Visualizer</h1>
+        <h1>algowhiz!</h1>
         <div class="controls">
             <label for="algorithm-select">Choose Algorithm:</label>
             <select id="algorithm-select">
@@ -22,20 +25,26 @@
             </select>
             <button id="run-btn">Run</button>
             <button id="reset-btn">Reset</button>
-            <input type="range" id="speed-control" min="100" max="2000" step="100" value="1000">
+            <input type="range" id="speed-control" min="1" max="100" step="1" value="5">
         </div>
     </header>
 
-    <div id="sorting-container">
+    <main class="welcome-page">
+        <div class="welcome-content">
+            <h2>Welcome to Algowhiz!</h2>
+            <p>Your go-to platform for learning and visualizing C++ algorithms. Dive into the world of sorting and pathfinding algorithms with interactive visualizations!</p>
+            <img src="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230703144619/CPP-Language.png" alt="Algorithm Visualization" class="welcome-image">
+            <p>Choose an algorithm from the dropdown above and see it in action!</p>
+        </div>
+    </main>
 
-    </div>
+    <div id="sorting-container"></div>
 
-    <div id="pathfinding-container" class="hidden">
+    <div id="pathfinding-container" style="display: none;">
         <div class="controls">
             <button id="set-start-btn">Set Start</button>
             <button id="set-end-btn">Set End</button>
             <button id="set-obstacle-btn">Set Obstacles</button>
-            <button id="run-pathfinding-btn">Run Pathfinding</button>
         </div>
         <div id="grid-container" class="grid-container"></div>
     </div>
