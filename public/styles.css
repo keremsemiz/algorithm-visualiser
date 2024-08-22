@@ -139,8 +139,9 @@ header h1 {
     grid-template-columns: repeat(20, 30px);
     grid-template-rows: repeat(20, 30px);
     gap: 2px;
-    background-color: #7f8c8d;
+    background-color: #34495e;
     margin-top: 20px;
+    border: 1px solid #7f8c8d;
 }
 
 .grid-cell {
@@ -152,6 +153,7 @@ header h1 {
     cursor: pointer;
 }
 
+
 .grid-cell.start {
     background-color: #2ecc71;
 }
@@ -162,6 +164,16 @@ header h1 {
 
 .grid-cell.obstacle {
     background-color: #34495e;
+}
+
+.grid-cell.visited {
+    background-color: #f39c12;
+    transition: background-color 0.3s ease;
+}
+
+.grid-cell.path {
+    background-color: #2ecc71;
+    transition: background-color 0.3s ease;
 }
 
 .feedback {

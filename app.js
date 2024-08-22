@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 app.post('/run-pathfinding', (req, res) => {
@@ -66,7 +66,7 @@ function runAStar(grid) {
         steps.push(closedSet.map(node => [node.row, node.col, 'visited']));
     }
 
-    return []; // No path found
+    return [];
 }
 
 function findNode(grid, type) {

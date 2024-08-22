@@ -14,6 +14,14 @@ document.getElementById('speed-control').addEventListener('input', (event) => {
 });
 
 document.getElementById('run-btn').addEventListener('click', () => {
+    if (selectedAlgorithm === 'pathfinding') {
+        runPathfinding();
+    } else {
+        runSortingAlgorithm();
+    }
+});
+
+function runSortingAlgorithm() {
     const code = document.getElementById('code-editor').value;
     const arrayInput = document.getElementById('array-input').value;
     const array = arrayInput.split(',').map(Number);
@@ -23,7 +31,7 @@ document.getElementById('run-btn').addEventListener('click', () => {
         return;
     }
     sendCodeToBackend(code, array);
-});
+}
 
 document.getElementById('random-btn').addEventListener('click', () => {
     const arraySize = 10;
@@ -43,10 +51,6 @@ document.getElementById('set-obstacle-btn').addEventListener('click', () => {
     setMode = 'obstacle';
 });
 
-document.getElementById('run-pathfinding-btn').addEventListener('click', () => {
-    runPathfinding();
-});
-
 function toggleAlgorithmView(algorithm) {
     document.getElementById('sorting-container').style.display = 'none';
     document.getElementById('pathfinding-container').style.display = 'none';
@@ -63,7 +67,7 @@ function createGrid() {
     const gridContainer = document.getElementById('grid-container');
     gridContainer.innerHTML = '';
 
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < 20 * 20; i++) {
         const cell = document.createElement('div');
         cell.classList.add('grid-cell');
         cell.addEventListener('click', () => {
@@ -116,6 +120,8 @@ function sendCodeToBackend(code, array) {
 }
 
 function runPathfinding() {
+    console.log("Run Pathfinding clicked");
+
     const grid = [];
     document.querySelectorAll('.grid-cell').forEach((cell, index) => {
         const row = Math.floor(index / 20);
@@ -132,6 +138,8 @@ function runPathfinding() {
         }
     });
 
+    console.log("Grid sent to server:", grid);
+
     fetch('/run-pathfinding', {
         method: 'POST',
         headers: {
@@ -141,8 +149,9 @@ function runPathfinding() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            document.getElementById('feedback').innerText = `Error: ${data.details}`;
+        console.log("Response from server:", data);
+        if (data.steps.length === 0) {
+            document.getElementById('feedback').innerText = 'No path found!';
         } else {
             visualizePathfinding(data.steps);
         }
@@ -167,40 +176,3 @@ function visualizePathfinding(steps) {
         }, speed * index);
     });
 }
-document.getElementById('run-pathfinding-btn').addEventListener('click', () => {
-    const grid = [];
-    document.querySelectorAll('.grid-cell').forEach((cell, index) => {
-        const row = Math.floor(index / 20);
-        const col = index % 20;
-        if (!grid[row]) grid[row] = [];
-        if (cell.classList.contains('start')) {
-            grid[row][col] = 'S';
-        } else if (cell.classList.contains('end')) {
-            grid[row][col] = 'E';
-        } else if (cell.classList.contains('obstacle')) {
-            grid[row][col] = 'O';
-        } else {
-            grid[row][col] = ' ';
-        }
-    });
-
-    fetch('/run-pathfinding', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ grid }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.steps.length === 0) {
-            document.getElementById('feedback').innerText = 'No path found!';
-        } else {
-            visualizePathfinding(data.steps);
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        document.getElementById('feedback').innerText = 'Error: Unable to process the request.';
-    });
-});
