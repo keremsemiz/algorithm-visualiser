@@ -1,15 +1,64 @@
 body {
-    font-family: 'League Spartan', sans-serif;
-    font-weight: 500;
-    background-color: #34495e;
-    color: #ecf0f1;
+    background-color: var(--sheet);
+    color: var(--text);
+    font-family: "Phantom Sans", system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, sans-serif;
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-body);
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
     min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    font-smooth: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
 }
-button, select, label{
-    font-family: 'League Spartan', sans-serif;
-    font-weight: 500;
+  
+.header {
+    padding: 1rem;
+    background-color: var(--smoke);
+    display: flex;
 }
+
+.headerholder {
+    padding: 1rem;
+    background-color: var(--smoke);
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    cursor: pointer;
+    background-color: var(--primary);
+    color: var(--background);
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border: none;
+    font-size: 1rem;
+}
+  
+button:hover {
+    opacity: 0.8;
+}
+  
+svg {
+    fill: var(--text);
+}
+
+.maincard{
+    margin-top: 1rem;
+}
+
+
+[data-theme='dark'] {
+    --text: var(--snow);
+    --elevated: var(--dark);
+    --sheet: var(--dark);
+    --smoke: var(--darkless)
+    --sunken: var(--black);
+    --border: var(--slate);
+
+    .header{
+        background-color: var(--darkless);
+    }
+} 
