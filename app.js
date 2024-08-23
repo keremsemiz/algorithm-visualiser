@@ -9,8 +9,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 app.post('/run-pathfinding', (req, res) => {
-    const grid = req.body.grid;
-    const steps = runAStar(grid);
+    const { grid, algorithm } = req.body;
+    let steps;
+
+    if (algorithm === 'dijkstra') {
+        steps = runDijkstra(grid);
+    } else {
+        steps = runAStar(grid);
+    }
+
     res.json({ steps });
 });
 
@@ -67,6 +74,52 @@ function runAStar(grid) {
     }
 
     return []; 
+}
+
+function runDijkstra(grid) {
+    const numRows = grid.length;
+    const numCols = grid[0].length;
+
+    const startNode = findNode(grid, 'S');
+    const endNode = findNode(grid, 'E');
+
+    const openSet = [startNode];
+    const cameFrom = {};
+    const distance = createGrid(numRows, numCols, Infinity);
+
+    distance[startNode.row][startNode.col] = 0;
+
+    const steps = [];
+
+    while (openSet.length > 0) {
+        const current = openSet.reduce((lowest, node) => 
+            distance[node.row][node.col] < distance[lowest.row][lowest.col] ? node : lowest
+        );
+
+        if (current.row === endNode.row && current.col === endNode.col) {
+            return reconstructPath(cameFrom, current, steps);
+        }
+
+        openSet.splice(openSet.indexOf(current), 1);
+
+        const neighbors = getNeighbors(current, grid);
+        neighbors.forEach(neighbor => {
+            const tentativeDistance = distance[current.row][current.col] + 1;
+
+            if (tentativeDistance < distance[neighbor.row][neighbor.col]) {
+                cameFrom[`${neighbor.row},${neighbor.col}`] = current;
+                distance[neighbor.row][neighbor.col] = tentativeDistance;
+
+                if (!openSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
+                    openSet.push(neighbor);
+                }
+            }
+        });
+
+        steps.push([[current.row, current.col, 'visited']]);
+    }
+
+    return [];
 }
 
 function findNode(grid, type) {

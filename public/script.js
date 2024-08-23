@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
+            if (data.error) {ac
                 feedbackElement.innerText = `Error: ${data.details}`;
                 document.getElementById('visualization-area').innerText = '';
             } else {

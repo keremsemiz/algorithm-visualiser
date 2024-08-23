@@ -118,28 +118,22 @@ svg {
 
 [data-theme='dark'] {
     --text: var(--snow);
-    --background: var(--darker);
     --elevated: var(--dark);
     --sheet: var(--dark);
+    --smoke: var(--darkless)
     --sunken: var(--black);
     --border: var(--slate);
 
-    body {
-        background-color: var(--background);
-    }
-
-    .header {
+    .header{
         background-color: var(--darkless);
     }
-
-    .card {
+    .maincard{
         background-color: var(--darkless);
     }
-
-    svg {
-        fill: var(--snow);
+    .code{
+        background-color:  #121217;
     }
-}
+} 
 .grid-container {
     display: grid;
     grid-template-columns: repeat(20, 30px);

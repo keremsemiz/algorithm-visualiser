@@ -24,7 +24,8 @@
                     <option value="quick-sort">Quick Sort</option>
                     <option value="merge-sort">Merge Sort</option>
                     <option value="heap-sort">Heap Sort</option>
-                    <option value="pathfinding">Shortest Path</option>
+                    <option value="a-star">A*</option>
+                    <option value="dijkstra">Dijkstra</option>
                 </select>
                 <button id="run-btn" class="btn">Run</button>
                 <button id="reset-btn" class="btn">Reset</button>
@@ -41,14 +42,14 @@
 
     <div class="container card maincard">
         <div id="sorting-container"></div>
-        <div id="pathfinding-container" style="display: none;">
+        <div id="pathfinding-container" style="display: none; height: 100%;">
             <div class="controls">
                 <button id="set-start-btn" class="btn">Set Start</button>
                 <button id="set-end-btn" class="btn">Set End</button>
                 <button id="set-obstacle-btn" class="btn">Set Obstacles</button>
             </div>
-            <div id="grid-container" class="grid-container"></div>
-        </div>
+            <div id="grid-container" class="grid-container" style="height: 100%;"></div>
+        </div>        
     </div>
 
     <div id="feedback" class="feedback"></div>
