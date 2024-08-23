@@ -29,7 +29,14 @@ body {
 }
 
 .rightside{
+    display: flex;
+    gap: 3rem;
+}
 
+.btn{
+    display: block;
+    margin: auto;
+    text-decoration: none;
 }
 
 .headerimage{
@@ -78,8 +85,8 @@ code {
     gap: 5rem;
 }
 
-.right{
-    max-width: 25rem;
+.showcase p{
+    max-width: 30rem;
 }
 
 svg {
