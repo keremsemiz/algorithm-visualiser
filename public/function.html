@@ -41,7 +41,13 @@
     </header>
 
     <div class="container card maincard">
-        <div id="sorting-container"></div>
+        <div id="sorting-container" style="display: none;">
+            <div class="controls">
+                <input type="text" id="array-input" placeholder="Enter comma-separated numbers" />
+                <div id="array-container" class="array-container"></div>
+            </div>
+        </div>
+        
         <div id="pathfinding-container" style="display: none; height: 100%;">
             <div class="controls">
                 <button id="set-start-btn" class="btn">Set Start</button>

@@ -8,14 +8,66 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
+app.post('/run-code', (req, res) => {
+    const { code, array, algorithm } = req.body;
+    let steps;
+
+    if (algorithm === 'bubble-sort') {
+        steps = runBubbleSort(array);
+    } else if (algorithm === 'selection-sort') {
+        steps = runSelectionSort(array);
+    } else {
+        res.status(400).json({ error: "Unknown algorithm selected" });
+        return;
+    }
+
+    res.json({ steps });
+});
+
+function runBubbleSort(array) {
+    const steps = [];
+    let swapped;
+    do {
+        swapped = false;
+        for (let i = 0; i < array.length - 1; i++) {
+            if (array[i] > array[i + 1]) {
+                [array[i], array[i + 1]] = [array[i + 1], array[i]];
+                swapped = true;
+                steps.push([...array]);
+            }
+        }
+    } while (swapped);
+    return steps;
+}
+
+function runSelectionSort(array) {
+    const steps = [];
+    for (let i = 0; i < array.length; i++) {
+        let minIndex = i;
+        for (let j = i + 1; j < array.length; j++) {
+            if (array[j] < array[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex !== i) {
+            [array[i], array[minIndex]] = [array[minIndex], array[i]];
+            steps.push([...array]);
+        }
+    }
+    return steps;
+}
+
 app.post('/run-pathfinding', (req, res) => {
     const { grid, algorithm } = req.body;
     let steps;
 
     if (algorithm === 'dijkstra') {
         steps = runDijkstra(grid);
-    } else {
+    } else if (algorithm === 'a-star') {
         steps = runAStar(grid);
+    } else {
+        res.status(400).json({ error: "Unknown algorithm selected" });
+        return;
     }
 
     res.json({ steps });

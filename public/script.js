@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('run-btn').addEventListener('click', () => {
         console.log("Run button clicked");
 
-        if (selectedAlgorithm === 'pathfinding') {
+        if (selectedAlgorithm === 'a-star' || selectedAlgorithm === 'dijkstra') {
             console.log("Pathfinding algorithm selected");
             runPathfinding();
         } else {
@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     function runSortingAlgorithm() {
-        const code = document.getElementById('code-editor').value;
         const arrayInput = document.getElementById('array-input').value;
         const array = arrayInput.split(',').map(Number);
 
@@ -54,7 +53,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
             alert('Please enter a valid array of numbers.');
             return;
         }
-        sendCodeToBackend(code, array);
+
+        const algorithm = selectedAlgorithm;
+
+        fetch('/run-code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code: "", array, algorithm }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(`Error: ${data.details}`);
+                document.getElementById('feedback').innerText = `Error: ${data.details}`;
+            } else {
+                console.log("Visualization ready. Click 'Next Step' to proceed.");
+                steps = data.steps;
+                currentStep = 0;
+                displayStep(currentStep);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('feedback').innerText = 'Error: Unable to process the code.';
+        });
+    }
+
+    function displayStep(stepIndex) {
+        const stepArray = steps[stepIndex];
+        const arrayContainer = document.getElementById('array-container');
+        arrayContainer.innerHTML = '';
+        stepArray.forEach(value => {
+            const bar = document.createElement('div');
+            bar.className = 'array-bar';
+            bar.style.height = `${value * 5}px`; 
+            arrayContainer.appendChild(bar);
+        });
     }
 
     document.getElementById('set-start-btn').addEventListener('click', () => {
@@ -73,9 +109,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById('sorting-container').style.display = 'none';
         document.getElementById('pathfinding-container').style.display = 'none';
 
-        if (algorithm === 'pathfinding') {
+        if (algorithm === 'a-star' || algorithm === 'dijkstra') {
             document.getElementById('pathfinding-container').style.display = 'block';
-            createGrid();
+            createGrid(); 
         } else {
             document.getElementById('sorting-container').style.display = 'block';
         }
@@ -116,36 +152,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         document.querySelectorAll(`.grid-cell.${type}`).forEach(cell => cell.classList.remove(type));
     }
 
-    function sendCodeToBackend(code, array) {
-        const feedbackElement = document.getElementById('feedback');
-        feedbackElement.innerText = "Processing your code...";
-
-        fetch('/run-code', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code, array, algorithm: selectedAlgorithm }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {ac
-                feedbackElement.innerText = `Error: ${data.details}`;
-                document.getElementById('visualization-area').innerText = '';
-            } else {
-                feedbackElement.innerText = "Visualization ready. Click 'Next Step' to proceed.";
-                steps = data.steps;
-                currentStep = 0;
-                displayStep(currentStep);
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            feedbackElement.innerText = 'Error: Unable to process the code.';
-            document.getElementById('visualization-area').innerText = '';
-        });
-    }
-
     function runPathfinding() {
         console.log("Run Pathfinding function triggered");
     
@@ -174,7 +180,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ grid }),
+            body: JSON.stringify({ grid, algorithm: selectedAlgorithm }),
         })
         .then(response => response.json())
         .then(data => {
@@ -190,7 +196,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.getElementById('feedback').innerText = 'Error: Unable to process the request.';
         });
     }
-    
 
     function visualizePathfinding(steps) {
         steps.forEach((step, index) => {
