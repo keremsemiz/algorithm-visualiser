@@ -1,234 +1,224 @@
-body {
-    font-family: 'League Spartan', sans-serif;
-    font-weight: 500;
-    background-color: #34495e;
-    color: #ecf0f1;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+:root {
+    --darker: #121217;
+    --dark: #17171d;
+    --darkless: #252429;
+    --black: #1f2d3d;
+    --steel: #273444;
+    --slate: #3c4858;
+    --muted: #8492a6;
+    --smoke: #e0e6ed;
+    --snow: #f9fafc;
+    --white: #ffffff;
+    --red: #ec3750;
+    --orange: #ff8c37;
+    --yellow: #f1c40f;
+    --green: #33d6a6;
+    --cyan: #5bc0de;
+    --blue: #338eda;
+    --purple: #a633d6;
+    --text: var(--black);
+    --background: var(--white);
+    --elevated: var(--white);
+    --sheet: var(--snow);
+    --sunken: var(--smoke);
+    --border: var(--smoke);
+    --primary: #ec3750;
+    --secondary: #8492a6;
+    --accent: #5bc0de;
 }
 
-header {
-    background-color: #2c3e50;
-    padding: 15px 20px;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+body {
+    background-color: var(--sheet);
+    color: var(--text);
+    font-family: "Phantom Sans", system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, sans-serif;
+    line-height: var(--line-height-body);
+    font-weight: var(--font-weight-body);
+    margin: 0;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    font-smooth: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.header {
+    padding: 1rem;
+    background-color: var(--smoke);
+    display: flex;
+}
+
+.headerholder {
+    padding: 1rem;
+    background-color: var(--smoke);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #ecf0f1;
-}
-
-.controls {
+.rightside {
     display: flex;
-    gap: 10px;
+    gap: 1rem;
     align-items: center;
 }
 
-button, select, label{
-    font-family: 'League Spartan', sans-serif;
-    font-weight: 500;
+.container {
+    width: 100%;
+    margin: auto;
+    padding-left: var(--spacing-3);
+    padding-right: var(--spacing-3);
 }
 
-.controls label {
-    margin-right: 10px;
-    font-size: 14px;
+.card {
+    background: var(--elevated);
+    color: var(--text);
+    border-radius: var(--radii-extra);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    margin-top: 1rem;
 }
 
-.controls button,
-.controls select,
-.controls input[type="range"] {
-    padding: 8px 12px;
-    border-radius: 5px;
-    border: none;
-    font-size: 14px;
+.maincard {
+    margin-top: 2rem;
+}
+
+button {
     cursor: pointer;
-    background-color: #3b5998;
-    color: #ecf0f1;
+    background-color: var(--primary);
+    color: var(--background);
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border: none;
+    font-size: 1rem;
 }
 
-.controls select {
-    width: 160px;
+button:hover {
+    opacity: 0.8;
 }
 
-#sorting-container {
-    padding: 20px;
-    display: none;
-    background-color: #34495e;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+input[type="range"] {
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
-#pathfinding-container {
-    padding: 20px;
-    display: none;
-    background-color: #34495e;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+select {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: var(--radii-small);
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    color: var(--text);
 }
 
-#code-editor {
-    width: 100%;
-    max-width: 600px;
-    height: 100px;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    border: 1px solid #7f8c8d;
-    border-radius: 5px;
-    font-family: 'Arial', sans-serif;
-    font-size: 14px;
+svg {
+    fill: var(--text);
 }
 
-#array-input {
-    width: 100%;
-    max-width: 300px;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #7f8c8d;
-    background-color: #2c3e50;
-    color: #ecf0f1;
-}
+[data-theme='dark'] {
+    --text: var(--snow);
+    --background: var(--darker);
+    --elevated: var(--dark);
+    --sheet: var(--dark);
+    --sunken: var(--black);
+    --border: var(--slate);
 
-.visualization-controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+    body {
+        background-color: var(--background);
+    }
 
-.visualization-area {
-    width: 100%;
-    max-width: 800px;
-    height: 300px;
-    margin-top: 20px;
-    border: 1px solid #bdc3c7;
-    background-color: #2c3e50;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    .header {
+        background-color: var(--darkless);
+    }
 
-.array-bar {
-    width: 30px;
-    background-color: #3498db;
-    text-align: center;
-    color: white;
-    margin: 0 5px;
-    font-size: 14px;
-    transition: height 0.5s ease-in-out, background-color 0.5s ease;
-    border-radius: 4px;
-}
+    .card {
+        background-color: var(--darkless);
+    }
 
-.array-bar.red {
-    background-color: #e74c3c;
+    svg {
+        fill: var(--snow);
+    }
 }
-
-.array-bar.green {
-    background-color: #2ecc71;
-}
-
 .grid-container {
     display: grid;
     grid-template-columns: repeat(20, 30px);
     grid-template-rows: repeat(20, 30px);
     gap: 2px;
-    background-color: #34495e;
+    background-color: var(--darkless);
     margin-top: 20px;
-    border: 1px solid #7f8c8d;
+    border: 2px solid var(--steel);
+    border-radius: var(--radii-small);
+    box-shadow: var(--shadow-card);
 }
 
 .grid-cell {
     width: 30px;
     height: 30px;
-    background-color: #ecf0f1;
-    border: 1px solid #7f8c8d;
+    background-color: var(--sheet);
+    border: 1px solid var(--border);
     box-sizing: border-box;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .grid-cell.start {
-    background-color: #2ecc71;
+    background-color: var(--green);
+    border-color: var(--green);
 }
 
 .grid-cell.end {
-    background-color: #e74c3c;
+    background-color: var(--red);
+    border-color: var(--red);
 }
 
 .grid-cell.obstacle {
-    background-color: #34495e;
+    background-color: var(--steel);
 }
 
 .grid-cell.visited {
-    background-color: #f39c12;
+    background-color: var(--yellow);
 }
 
 .grid-cell.path {
-    background-color: #3498db;
+    background-color: var(--blue);
+    border-color: var(--blue);
 }
 
-
-.feedback {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #34495e;
-    color: #ecf0f1;
-    border-radius: 5px;
-    font-size: 14px;
-    text-align: center;
+.grid-cell:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-elevated);
 }
 
-.hidden {
-    display: none;
+[data-theme='dark'] .grid-container {
+    background-color: var(--dark);
+    border-color: var(--slate);
 }
 
-.welcome-page {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+[data-theme='dark'] .grid-cell {
+    background-color: var(--sunken);
+    border-color: var(--darkless);
 }
 
-.welcome-content {
-    max-width: 800px;
-    padding: 20px;
-    background-color: #2c3e50;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+[data-theme='dark'] .grid-cell.start {
+    background-color: var(--green);
+    border-color: var(--green);
 }
 
-.welcome-content h2 {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: #ecf0f1;
+[data-theme='dark'] .grid-cell.end {
+    background-color: var(--red);
+    border-color: var(--red);
 }
 
-.welcome-content p {
-    font-size: 18px;
-    color: #ecf0f1;
-    margin: 10px 0;
+[data-theme='dark'] .grid-cell.obstacle {
+    background-color: var(--slate);
 }
 
-.welcome-image {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border-radius: 10px;
-    margin: 20px 0;
+[data-theme='dark'] .grid-cell.visited {
+    background-color: var(--yellow);
+}
+
+[data-theme='dark'] .grid-cell.path {
+    background-color: var(--blue);
+    border-color: var(--blue);
 }
