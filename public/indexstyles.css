@@ -6,12 +6,13 @@ body {
     line-height: var(--line-height-body);
     font-weight: var(--font-weight-body);
     margin: 0;
-    min-height: 100vh;
+    height: 200vh;
     text-rendering: optimizeLegibility;
     font-smooth: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     box-sizing: border-box;
+    overflow-x: hidden;
 }
   
 .header {
@@ -27,6 +28,24 @@ body {
     justify-content: space-between;
 }
 
+.rightside{
+
+}
+
+.headerimage{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 77rem;
+    height: 38rem;
+    background-image: url("https://www.graphable.ai/wp-content/uploads/2023/03/path_finding_01.gif");
+}
+
+#dark-mode-toggle{
+    left: 5rem;
+}
+
 button {
     cursor: pointer;
     background-color: var(--primary);
@@ -40,9 +59,40 @@ button {
 button:hover {
     opacity: 0.8;
 }
-  
+
+code {
+    font-family: "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    font-size: inherit;
+    font-weight: 700;
+    color: var(--theme-ui-colors-accent, #5bc0de);
+    background-color: var(--sunken,);
+    border-radius: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.showcase{
+    display: flex;
+    gap: 5rem;
+}
+
+.right{
+    max-width: 25rem;
+}
+
 svg {
     fill: var(--text);
+}
+
+.eyebrow{
+    text-overflow: clip;
+    text-wrap: nowrap;
+}
+
+.textshowcase{
+    margin-top: 2rem;
 }
 
 .maincard{
@@ -60,5 +110,11 @@ svg {
 
     .header{
         background-color: var(--darkless);
+    }
+    .maincard{
+        background-color: var(--darkless);
+    }
+    .code{
+        background-color:  #121217;
     }
 } 
