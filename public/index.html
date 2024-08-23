@@ -7,49 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="indexstyles.css">
 </head>
 <body>
     <header>
-        <h1>algowhiz!</h1>
-        <div class="controls">
-            <label for="algorithm-select">Choose Algorithm:</label>
-            <select id="algorithm-select">
-                <option value="bubble-sort">Bubble Sort</option>
-                <option value="selection-sort">Selection Sort</option>
-                <option value="insertion-sort">Insertion Sort</option>
-                <option value="quick-sort">Quick Sort</option>
-                <option value="merge-sort">Merge Sort</option>
-                <option value="heap-sort">Heap Sort</option>
-                <option value="pathfinding">Shortest Path</option>
-            </select>
-            <button id="run-btn">Run</button>
-            <button id="reset-btn">Reset</button>
-            <input type="range" id="speed-control" min="1" max="100" step="1" value="5">
-        </div>
     </header>
-
-    <main class="welcome-page">
-        <div class="welcome-content">
-            <h2>Welcome to Algowhiz!</h2>
-            <p>Your go-to platform for learning and visualizing C++ algorithms. Dive into the world of sorting and pathfinding algorithms with interactive visualizations!</p>
-            <img src="https://media.geeksforgeeks.org/wp-content/cdn-uploads/20230703144619/CPP-Language.png" alt="Algorithm Visualization" class="welcome-image">
-            <p>Choose an algorithm from the dropdown above and see it in action!</p>
-        </div>
-    </main>
-
-    <div id="sorting-container"></div>
-
-    <div id="pathfinding-container" style="display: none;">
-        <div class="controls">
-            <button id="set-start-btn">Set Start</button>
-            <button id="set-end-btn">Set End</button>
-            <button id="set-obstacle-btn">Set Obstacles</button>
-        </div>
-        <div id="grid-container" class="grid-container"></div>
-    </div>
-
-    <div id="feedback" class="feedback"></div>
 
     <script src="script.js"></script>
 </body>

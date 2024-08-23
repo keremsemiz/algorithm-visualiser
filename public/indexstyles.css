@@ -1,0 +1,15 @@
+body {
+    font-family: 'League Spartan', sans-serif;
+    font-weight: 500;
+    background-color: #34495e;
+    color: #ecf0f1;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+button, select, label{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: 500;
+}
