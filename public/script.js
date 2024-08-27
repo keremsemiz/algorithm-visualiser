@@ -69,10 +69,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 console.error(`Error: ${data.details}`);
                 document.getElementById('feedback').innerText = `Error: ${data.details}`;
             } else {
-                console.log("Visualization ready. Click 'Next Step' to proceed.");
+                console.log("Visualization ready. Starting automatic display.");
                 steps = data.steps;
                 currentStep = 0;
-                displayStep(currentStep);
+                autoDisplaySteps();
             }
         })
         .catch((error) => {
@@ -92,7 +92,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
             arrayContainer.appendChild(bar);
         });
     }
-
+    
+    function autoDisplaySteps() {
+        if (currentStep < steps.length) {
+            displayStep(currentStep);
+            currentStep++;
+            setTimeout(autoDisplaySteps, 1000 / speed);
+        } else {
+            console.log("Sorting completed.");
+        }
+    }
+    
+    document.getElementById('run-sorting-btn').addEventListener('click', () => {
+        console.log("Sorting button clicked");
+        runSortingAlgorithm();
+    });
+    
     document.getElementById('set-start-btn').addEventListener('click', () => {
         setMode = 'start';
     });

@@ -115,6 +115,25 @@ select {
 svg {
     fill: var(--text);
 }
+.array-container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 200px;
+    border: 1px solid var(--border);
+    background-color: var(--sheet);
+    margin-top: 20px;
+}
+
+.array-bar {
+    width: 20px;
+    margin: 2px;
+    background-color: #3498db;
+    display: inline-block;
+    vertical-align: bottom;
+    transition: height 0.3s ease;
+}
+
 
 [data-theme='dark'] {
     --text: var(--snow);
