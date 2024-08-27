@@ -1,12 +1,32 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', (event) => {
+    console.log("script.js is loaded and DOM is fully loaded");
+
     let currentStep = 0;
     let steps = [];
     let selectedAlgorithm = 'bubble-sort';
     let speed = 50;
-    let setMode = '';
+    let setMode = ''; // 'start', 'end', or 'obstacle'
     let currentArray = [];
 
-    const progressBar = document.getElementById('progress-bar');
+    const spinner = document.getElementById('loading-spinner');
+    const sortingContainer = document.getElementById('sorting-container');
+    const pathfindingContainer = document.getElementById('pathfinding-container');
+
+    showSpinner();
+
+    setTimeout(() => {
+        const selectedAlgorithm = document.getElementById('algorithm-select').value;
+        toggleAlgorithmView(selectedAlgorithm);
+        hideSpinner();
+    }, 1000);
+
+    function showSpinner() {
+        spinner.classList.remove('hidden');
+    }
+
+    function hideSpinner() {
+        spinner.classList.add('hidden');
+    }
 
     document.getElementById('algorithm-select').addEventListener('change', (event) => {
         selectedAlgorithm = event.target.value;
@@ -18,33 +38,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('run-btn').addEventListener('click', () => {
+        console.log("Run button clicked");
+
         if (selectedAlgorithm === 'a-star' || selectedAlgorithm === 'dijkstra') {
+            console.log("Pathfinding algorithm selected");
             runPathfinding();
         } else {
+            console.log("Sorting algorithm selected");
             runSortingAlgorithm();
         }
     });
 
-    document.getElementById('reset-btn').addEventListener('click', resetGrid);
-
-    document.getElementById('generate-random-btn').addEventListener('click', () => {
-        generateRandomArray();
-        visualizeArray(currentArray);
+    document.getElementById('set-start-btn').addEventListener('click', () => {
+        setMode = 'start';
+        console.log("Set mode to 'start'");
     });
 
-    function generateRandomArray() {
-        const arraySize = 20; 
-        currentArray = Array.from({ length: arraySize }, () => Math.floor(Math.random() * 100) + 1);
-        console.log("Random array generated:", currentArray);
-    }
+    document.getElementById('set-end-btn').addEventListener('click', () => {
+        setMode = 'end';
+        console.log("Set mode to 'end'");
+    });
+
+    document.getElementById('set-obstacle-btn').addEventListener('click', () => {
+        setMode = 'obstacle';
+        console.log("Set mode to 'obstacle'");
+    });
 
     function runSortingAlgorithm() {
-        if (!currentArray.length) {
-            alert('Please generate a random array first.');
+        const arrayInput = document.getElementById('array-input').value;
+
+        if (arrayInput) {
+            currentArray = arrayInput.split(',').map(Number);
+        }
+
+        if (currentArray.some(isNaN) || currentArray.length === 0) {
+            alert('Please enter a valid array of numbers.');
             return;
         }
 
         const algorithm = selectedAlgorithm;
+        console.log(`Running ${algorithm} on array:`, currentArray);
 
         fetch('/run-code', {
             method: 'POST',
@@ -59,10 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(`Error: ${data.details}`);
                 document.getElementById('feedback').innerText = `Error: ${data.details}`;
             } else {
+                console.log("Visualization ready. Starting automatic display.");
                 steps = data.steps;
                 currentStep = 0;
                 autoDisplaySteps();
-                updateProgressBar();
             }
         })
         .catch((error) => {
@@ -75,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentStep < steps.length) {
             displayStep(currentStep);
             currentStep++;
-            setTimeout(autoDisplaySteps, 1000 / speed);
+            setTimeout(autoDisplaySteps, 1000 / speed); 
         } else {
             console.log("Sorting completed.");
         }
@@ -83,65 +116,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayStep(stepIndex) {
         const stepArray = steps[stepIndex];
-        visualizeArray(stepArray);
-    }
-
-    function visualizeArray(array) {
         const arrayContainer = document.getElementById('array-container');
         arrayContainer.innerHTML = '';
-        const barWidth = Math.max(10, Math.floor(arrayContainer.clientWidth / array.length)) + "px";
-        array.forEach(value => {
+        stepArray.forEach(value => {
             const bar = document.createElement('div');
             bar.className = 'array-bar';
-            bar.style.height = `${value * 3}px`; 
-            bar.style.width = barWidth;
+            bar.style.height = `${value * 5}px`; 
             bar.setAttribute('data-value', value);
             arrayContainer.appendChild(bar);
         });
     }
 
-    function updateProgressBar() {
-        if (progressBar) {
-            const progressPercentage = ((currentStep / steps.length) * 100).toFixed(2);
-            progressBar.style.width = `${progressPercentage}%`;
-            progressBar.innerText = `${progressPercentage}%`;
-        }
-    }
-
-    function resetGrid() {
-        document.querySelectorAll('.grid-cell').forEach(cell => {
-            cell.className = 'grid-cell';
-        });
-    }
-
     function toggleAlgorithmView(algorithm) {
-        document.getElementById('sorting-container').style.display = 'none';
-        document.getElementById('pathfinding-container').style.display = 'none';
-
-        if (algorithm === 'a-star' || algorithm === 'dijkstra') {
-            document.getElementById('pathfinding-container').style.display = 'block';
-            createGrid();
+        console.log('Toggling view for algorithm:', algorithm);
+        if (algorithm === 'bubble-sort' || algorithm === 'selection-sort') {
+            sortingContainer.style.display = 'block';
+            pathfindingContainer.style.display = 'none';
+            initializeSortingArray();  // Initialize the sorting array
         } else {
-            document.getElementById('sorting-container').style.display = 'block';
+            sortingContainer.style.display = 'none';
+            pathfindingContainer.style.display = 'block';
+            createGrid();  // Initialize the grid for pathfinding
         }
+    }
+
+    function initializeSortingArray() {
+        console.log("Initializing sorting array visualization");
+        const arrayContainer = document.getElementById('array-container');
+        currentArray = generateRandomArray();
+        visualizeArray(arrayContainer, currentArray);
+    }
+
+    function generateRandomArray() {
+        return Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
+    }
+
+    function visualizeArray(container, array) {
+        container.innerHTML = '';
+        array.forEach(value => {
+            const bar = document.createElement('div');
+            bar.className = 'array-bar';
+            bar.style.height = `${value * 5}px`;
+            bar.setAttribute('data-value', value);
+            container.appendChild(bar);
+        });
     }
 
     function createGrid() {
         const gridContainer = document.getElementById('grid-container');
         gridContainer.innerHTML = '';
-
+    
         const numRows = 20;
         const numCols = 20;
-
+    
         for (let row = 0; row < numRows; row++) {
             for (let col = 0; col < numCols; col++) {
                 const cell = document.createElement('div');
                 cell.classList.add('grid-cell');
                 cell.dataset.row = row;
                 cell.dataset.col = col;
-
-                cell.addEventListener('click', () => handleCellClick(cell));
-
+    
+                cell.addEventListener('click', () => {
+                    handleCellClick(cell);
+                });
+    
                 gridContainer.appendChild(cell);
             }
         }
@@ -151,11 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (setMode === 'start') {
             clearCells('start');
             cell.classList.add('start');
+            console.log(`Start set at row ${cell.dataset.row}, col ${cell.dataset.col}`);
         } else if (setMode === 'end') {
             clearCells('end');
             cell.classList.add('end');
+            console.log(`End set at row ${cell.dataset.row}, col ${cell.dataset.col}`);
         } else if (setMode === 'obstacle') {
             cell.classList.toggle('obstacle');
+            console.log(`Obstacle toggled at row ${cell.dataset.row}, col ${cell.dataset.col}`);
         }
     }
 
@@ -164,14 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function runPathfinding() {
+        console.log("Run Pathfinding function triggered");
+    
         const grid = [];
         document.querySelectorAll('.grid-cell').forEach((cell, index) => {
             const row = Math.floor(index / 20);
             const col = index % 20;
             if (!grid[row]) grid[row] = [];
             if (cell.classList.contains('start')) {
+                console.log("Start cell found at:", row, col);
                 grid[row][col] = 'S';
             } else if (cell.classList.contains('end')) {
+                console.log("End cell found at:", row, col);
                 grid[row][col] = 'E';
             } else if (cell.classList.contains('obstacle')) {
                 grid[row][col] = 'O';
@@ -179,7 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 grid[row][col] = ' ';
             }
         });
-
+    
+        console.log("Grid prepared for server:", grid);
+    
         fetch('/run-pathfinding', {
             method: 'POST',
             headers: {
@@ -189,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
+            console.log("Response from server:", data);
             if (data.steps.length === 0) {
                 document.getElementById('feedback').innerText = 'No path found!';
             } else {
