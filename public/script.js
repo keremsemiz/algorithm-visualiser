@@ -45,6 +45,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+    const nextStepBtn = document.getElementById('next-step-btn');
+    if (nextStepBtn) {
+        nextStepBtn.addEventListener('click', () => {
+            if (currentStep < steps.length) {
+                displayStep(currentStep);
+                currentStep++;
+            } else {
+                console.log("Sorting completed.");
+            }
+        });
+    }
+
     function runSortingAlgorithm() {
         const arrayInput = document.getElementById('array-input').value;
         const array = arrayInput.split(',').map(Number);
@@ -69,10 +81,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 console.error(`Error: ${data.details}`);
                 document.getElementById('feedback').innerText = `Error: ${data.details}`;
             } else {
-                console.log("Visualization ready. Starting automatic display.");
+                console.log("Visualization ready. Click 'Next Step' to proceed.");
                 steps = data.steps;
                 currentStep = 0;
-                autoDisplaySteps();
+                displayStep(currentStep);
             }
         })
         .catch((error) => {
@@ -84,30 +96,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function displayStep(stepIndex) {
         const stepArray = steps[stepIndex];
         const arrayContainer = document.getElementById('array-container');
-        arrayContainer.innerHTML = '';
+        arrayContainer.innerHTML = ''; 
+
         stepArray.forEach(value => {
             const bar = document.createElement('div');
             bar.className = 'array-bar';
             bar.style.height = `${value * 5}px`; 
+            bar.setAttribute('data-value', value); 
             arrayContainer.appendChild(bar);
         });
     }
-    
-    function autoDisplaySteps() {
-        if (currentStep < steps.length) {
-            displayStep(currentStep);
-            currentStep++;
-            setTimeout(autoDisplaySteps, 1000 / speed);
-        } else {
-            console.log("Sorting completed.");
-        }
-    }
-    
-    document.getElementById('run-sorting-btn').addEventListener('click', () => {
-        console.log("Sorting button clicked");
-        runSortingAlgorithm();
-    });
-    
+
     document.getElementById('set-start-btn').addEventListener('click', () => {
         setMode = 'start';
     });

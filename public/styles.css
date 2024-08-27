@@ -25,6 +25,12 @@
     --primary: #ec3750;
     --secondary: #8492a6;
     --accent: #5bc0de;
+
+    --spacing-3: 1rem;
+    --radii-extra: 10px;
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --line-height-body: 1.5;
+    --font-weight-body: 400;
 }
 
 body {
@@ -119,10 +125,14 @@ svg {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    height: 200px;
+    height: 30rem;
     border: 1px solid var(--border);
     background-color: var(--sheet);
     margin-top: 20px;
+}
+
+#algorithm-select{
+    color: var(--darkless);
 }
 
 .array-bar {
@@ -131,9 +141,19 @@ svg {
     background-color: #3498db;
     display: inline-block;
     vertical-align: bottom;
+    position: relative;
     transition: height 0.3s ease;
 }
 
+.array-bar::after {
+    content: attr(data-value);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text); 
+    font-size: 14px;
+}
 
 [data-theme='dark'] {
     --text: var(--snow);
@@ -234,4 +254,61 @@ svg {
 [data-theme='dark'] .grid-cell.path {
     background-color: var(--blue);
     border-color: var(--blue);
+}
+@media (max-width: 1024px) {
+    .headerholder {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .rightside {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .container {
+        padding-left: var(--spacing-3);
+        padding-right: var(--spacing-3);
+        width: 90%;
+    }
+
+    .card {
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .maincard {
+        margin-top: 1rem;
+    }
+
+    button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    input[type="range"] {
+        width: 100%;
+    }
+
+    select {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .array-container {
+        height: 20rem;
+        justify-content: flex-start;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(10, 25px);
+        grid-template-rows: repeat(10, 25px);
+    }
+
+    .grid-cell {
+        width: 25px;
+        height: 25px;
+    }
 }
