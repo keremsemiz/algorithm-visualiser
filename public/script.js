@@ -119,17 +119,54 @@ document.addEventListener('DOMContentLoaded', (event) => {
         setMode = 'obstacle';
     });
 
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const selectedAlgorithm = document.getElementById('algorithm-select').value;
+        toggleAlgorithmView(selectedAlgorithm);
+    });
+    
     function toggleAlgorithmView(algorithm) {
-        document.getElementById('sorting-container').style.display = 'none';
-        document.getElementById('pathfinding-container').style.display = 'none';
-
-        if (algorithm === 'a-star' || algorithm === 'dijkstra') {
-            document.getElementById('pathfinding-container').style.display = 'block';
-            createGrid(); 
+        const sortingContainer = document.getElementById('sorting-container');
+        const pathfindingContainer = document.getElementById('pathfinding-container');
+    
+        if (algorithm === 'bubble-sort' || algorithm === 'selection-sort') {
+            sortingContainer.style.display = 'block';
+            pathfindingContainer.style.display = 'none';
         } else {
-            document.getElementById('sorting-container').style.display = 'block';
+            sortingContainer.style.display = 'none';
+            pathfindingContainer.style.display = 'block';
         }
     }
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const selectedAlgorithm = document.getElementById('algorithm-select').value;
+        toggleAlgorithmView(selectedAlgorithm);
+    
+        if (selectedAlgorithm === 'bubble-sort' || selectedAlgorithm === 'selection-sort') {
+            initializeSortingArray();
+        }
+    });
+    
+    function initializeSortingArray() {
+        const arrayContainer = document.getElementById('array-container');
+        const array = generateRandomArray(); 
+        visualizeArray(arrayContainer, array);
+    }
+    
+    function generateRandomArray() {
+        return Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
+    }
+    
+    function visualizeArray(container, array) {
+        container.innerHTML = '';
+        array.forEach(value => {
+            const bar = document.createElement('div');
+            bar.className = 'array-bar';
+            bar.style.height = `${value * 3}px`;
+            bar.setAttribute('data-value', value);
+            container.appendChild(bar);
+        });
+    }    
+
 
     function createGrid() {
         const gridContainer = document.getElementById('grid-container');
