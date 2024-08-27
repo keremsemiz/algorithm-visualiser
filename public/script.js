@@ -7,14 +7,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let speed = 50;
     let setMode = '';
 
-    const resetBtn = document.getElementById('reset-btn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            console.log("Reset button clicked");
-            resetGrid();
-        });
-    } else {
-        console.error("Element 'reset-btn' not found");
+    const spinner = document.getElementById('loading-spinner');
+    const sortingContainer = document.getElementById('sorting-container');
+    const pathfindingContainer = document.getElementById('pathfinding-container');
+
+    showSpinner();
+
+    setTimeout(() => {
+        const selectedAlgorithm = document.getElementById('algorithm-select').value;
+        toggleAlgorithmView(selectedAlgorithm);
+
+        hideSpinner();
+    }, 1000);
+
+    function showSpinner() {
+        spinner.classList.remove('hidden');
+    }
+
+    function hideSpinner() {
+        spinner.classList.add('hidden');
     }
 
     function resetGrid() {
@@ -45,18 +56,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
-    const nextStepBtn = document.getElementById('next-step-btn');
-    if (nextStepBtn) {
-        nextStepBtn.addEventListener('click', () => {
-            if (currentStep < steps.length) {
-                displayStep(currentStep);
-                currentStep++;
-            } else {
-                console.log("Sorting completed.");
-            }
-        });
-    }
-
     function runSortingAlgorithm() {
         const arrayInput = document.getElementById('array-input').value;
         const array = arrayInput.split(',').map(Number);
@@ -81,10 +80,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 console.error(`Error: ${data.details}`);
                 document.getElementById('feedback').innerText = `Error: ${data.details}`;
             } else {
-                console.log("Visualization ready. Click 'Next Step' to proceed.");
+                console.log("Visualization ready. Starting automatic display.");
                 steps = data.steps;
                 currentStep = 0;
-                displayStep(currentStep);
+                autoDisplaySteps();
             }
         })
         .catch((error) => {
@@ -93,16 +92,25 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
+    function autoDisplaySteps() {
+        if (currentStep < steps.length) {
+            displayStep(currentStep);
+            currentStep++;
+            setTimeout(autoDisplaySteps, 1000 / speed); 
+        } else {
+            console.log("Sorting completed.");
+        }
+    }
+
     function displayStep(stepIndex) {
         const stepArray = steps[stepIndex];
         const arrayContainer = document.getElementById('array-container');
-        arrayContainer.innerHTML = ''; 
-
+        arrayContainer.innerHTML = '';
         stepArray.forEach(value => {
             const bar = document.createElement('div');
             bar.className = 'array-bar';
             bar.style.height = `${value * 5}px`; 
-            bar.setAttribute('data-value', value); 
+            bar.setAttribute('data-value', value);
             arrayContainer.appendChild(bar);
         });
     }
@@ -119,54 +127,40 @@ document.addEventListener('DOMContentLoaded', (event) => {
         setMode = 'obstacle';
     });
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const selectedAlgorithm = document.getElementById('algorithm-select').value;
-        toggleAlgorithmView(selectedAlgorithm);
-    });
-    
     function toggleAlgorithmView(algorithm) {
-        const sortingContainer = document.getElementById('sorting-container');
-        const pathfindingContainer = document.getElementById('pathfinding-container');
-    
+        console.log('Toggling view for algorithm:', algorithm);
         if (algorithm === 'bubble-sort' || algorithm === 'selection-sort') {
             sortingContainer.style.display = 'block';
             pathfindingContainer.style.display = 'none';
+            initializeSortingArray();
         } else {
             sortingContainer.style.display = 'none';
             pathfindingContainer.style.display = 'block';
+            createGrid();
         }
     }
 
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const selectedAlgorithm = document.getElementById('algorithm-select').value;
-        toggleAlgorithmView(selectedAlgorithm);
-    
-        if (selectedAlgorithm === 'bubble-sort' || selectedAlgorithm === 'selection-sort') {
-            initializeSortingArray();
-        }
-    });
-    
     function initializeSortingArray() {
+        console.log("Initializing sorting array visualization");
         const arrayContainer = document.getElementById('array-container');
-        const array = generateRandomArray(); 
+        const array = generateRandomArray();
         visualizeArray(arrayContainer, array);
     }
-    
+
     function generateRandomArray() {
         return Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
     }
-    
+
     function visualizeArray(container, array) {
         container.innerHTML = '';
         array.forEach(value => {
             const bar = document.createElement('div');
             bar.className = 'array-bar';
-            bar.style.height = `${value * 3}px`;
+            bar.style.height = `${value * 5}px`;
             bar.setAttribute('data-value', value);
             container.appendChild(bar);
         });
-    }    
-
+    }
 
     function createGrid() {
         const gridContainer = document.getElementById('grid-container');
