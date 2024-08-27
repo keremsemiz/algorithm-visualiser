@@ -51,9 +51,18 @@ body {
 }
 
 .header {
-    padding: 1rem;
-    background-color: var(--smoke);
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rightside {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 .headerholder {
@@ -64,11 +73,6 @@ body {
     align-items: center;
 }
 
-.rightside {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
 
 .container {
     width: 100%;
@@ -78,6 +82,10 @@ body {
 }
 
 .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: var(--elevated);
     color: var(--text);
     border-radius: var(--radii-extra);
@@ -310,5 +318,78 @@ svg {
     .grid-cell {
         width: 25px;
         height: 25px;
+    }
+}
+@media (max-width: 768px) {
+    .headerholder {
+        padding: 0.5rem 0;
+        justify-content: center;
+    }
+
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        width: 100%;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .array-container {
+        height: 15rem;
+        justify-content: flex-start;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(8, 20px);
+        grid-template-rows: repeat(8, 20px);
+    }
+
+    .grid-cell {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerholder {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .rightside {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .card {
+        margin-top: 0.5rem;
+        padding: 1rem 0.5rem;
+    }
+
+    .array-container {
+        height: 12rem;
+        justify-content: center;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(6, 18px);
+        grid-template-rows: repeat(6, 18px);
+    }
+
+    .grid-cell {
+        width: 18px;
+        height: 18px;
+    }
+
+    select, button {
+        width: 100%;
     }
 }
