@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let selectedAlgorithm = 'bubble-sort';
     let speed = 50;
     let setMode = '';
+    let currentArray = [];
 
     const spinner = document.getElementById('loading-spinner');
     const sortingContainer = document.getElementById('sorting-container');
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     setTimeout(() => {
         const selectedAlgorithm = document.getElementById('algorithm-select').value;
         toggleAlgorithmView(selectedAlgorithm);
-
         hideSpinner();
     }, 1000);
 
@@ -26,13 +26,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function hideSpinner() {
         spinner.classList.add('hidden');
-    }
-
-    function resetGrid() {
-        document.querySelectorAll('.grid-cell').forEach(cell => {
-            cell.className = 'grid-cell';
-        });
-        console.log("Grid has been reset");
     }
 
     document.getElementById('algorithm-select').addEventListener('change', (event) => {
@@ -56,23 +49,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+    document.getElementById('set-start-btn').addEventListener('click', () => {
+        setMode = 'start';
+        console.log("Set mode to 'start'");
+    });
+
+    document.getElementById('set-end-btn').addEventListener('click', () => {
+        setMode = 'end';
+        console.log("Set mode to 'end'");
+    });
+
+    document.getElementById('set-obstacle-btn').addEventListener('click', () => {
+        setMode = 'obstacle';
+        console.log("Set mode to 'obstacle'");
+    });
+
     function runSortingAlgorithm() {
         const arrayInput = document.getElementById('array-input').value;
-        const array = arrayInput.split(',').map(Number);
 
-        if (array.some(isNaN)) {
+        if (arrayInput) {
+            currentArray = arrayInput.split(',').map(Number);
+        }
+
+        if (currentArray.some(isNaN) || currentArray.length === 0) {
             alert('Please enter a valid array of numbers.');
             return;
         }
 
         const algorithm = selectedAlgorithm;
+        console.log(`Running ${algorithm} on array:`, currentArray);
 
         fetch('/run-code', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ code: "", array, algorithm }),
+            body: JSON.stringify({ code: "", array: currentArray, algorithm }),
         })
         .then(response => response.json())
         .then(data => {
@@ -115,18 +127,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     }
 
-    document.getElementById('set-start-btn').addEventListener('click', () => {
-        setMode = 'start';
-    });
-
-    document.getElementById('set-end-btn').addEventListener('click', () => {
-        setMode = 'end';
-    });
-
-    document.getElementById('set-obstacle-btn').addEventListener('click', () => {
-        setMode = 'obstacle';
-    });
-
     function toggleAlgorithmView(algorithm) {
         console.log('Toggling view for algorithm:', algorithm);
         if (algorithm === 'bubble-sort' || algorithm === 'selection-sort') {
@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function initializeSortingArray() {
         console.log("Initializing sorting array visualization");
         const arrayContainer = document.getElementById('array-container');
-        const array = generateRandomArray();
-        visualizeArray(arrayContainer, array);
+        currentArray = generateRandomArray();
+        visualizeArray(arrayContainer, currentArray);
     }
 
     function generateRandomArray() {
@@ -177,19 +177,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 cell.dataset.col = col;
     
                 cell.addEventListener('click', () => {
-                    if (setMode === 'start') {
-                        clearCells('start');
-                        cell.classList.add('start');
-                    } else if (setMode === 'end') {
-                        clearCells('end');
-                        cell.classList.add('end');
-                    } else if (setMode === 'obstacle') {
-                        cell.classList.toggle('obstacle');
-                    }
+                    handleCellClick(cell);
                 });
     
                 gridContainer.appendChild(cell);
             }
+        }
+    }
+
+    function handleCellClick(cell) {
+        if (setMode === 'start') {
+            clearCells('start');
+            cell.classList.add('start');
+            console.log(`Start set at row ${cell.dataset.row}, col ${cell.dataset.col}`);
+        } else if (setMode === 'end') {
+            clearCells('end');
+            cell.classList.add('end');
+            console.log(`End set at row ${cell.dataset.row}, col ${cell.dataset.col}`);
+        } else if (setMode === 'obstacle') {
+            cell.classList.toggle('obstacle');
+            console.log(`Obstacle toggled at row ${cell.dataset.row}, col ${cell.dataset.col}`);
         }
     }
 
