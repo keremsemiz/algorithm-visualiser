@@ -16,6 +16,14 @@ app.post('/run-code', (req, res) => {
         steps = runBubbleSort(array);
     } else if (algorithm === 'selection-sort') {
         steps = runSelectionSort(array);
+    } else if (algorithm === 'insertion-sort') {
+        steps = runInsertionSort(array);
+    } else if (algorithm === 'quick-sort') {
+        steps = runQuickSort(array);
+    } else if (algorithm === 'merge-sort') {
+        steps = runMergeSort(array);
+    } else if (algorithm === 'heap-sort') {
+        steps = runHeapSort(array);
     } else {
         res.status(400).json({ error: "Unknown algorithm selected" });
         return;
@@ -57,6 +65,137 @@ function runSelectionSort(array) {
     return steps;
 }
 
+function runInsertionSort(array) {
+    const steps = [];
+    for (let i = 1; i < array.length; i++) {
+        let key = array[i];
+        let j = i - 1;
+        while (j >= 0 && array[j] > key) {
+            array[j + 1] = array[j];
+            j = j - 1;
+        }
+        array[j + 1] = key;
+        steps.push([...array]);
+    }
+    return steps;
+}
+
+function runQuickSort(array) {
+    const steps = [];
+    quickSort(array, 0, array.length - 1, steps);
+    return steps;
+}
+
+function quickSort(array, low, high, steps) {
+    if (low < high) {
+        const pi = partition(array, low, high, steps);
+        quickSort(array, low, pi - 1, steps);
+        quickSort(array, pi + 1, high, steps);
+    }
+}
+
+function partition(array, low, high, steps) {
+    const pivot = array[high];
+    let i = low - 1;
+    for (let j = low; j < high; j++) {
+        if (array[j] < pivot) {
+            i++;
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    [array[i + 1], array[high]] = [array[high], array[i + 1]];
+    steps.push([...array]);
+    return i + 1;
+}
+
+function runMergeSort(array) {
+    const steps = [];
+    mergeSort(array, 0, array.length - 1, steps);
+    return steps;
+}
+
+function mergeSort(array, l, r, steps) {
+    if (l < r) {
+        const m = Math.floor((l + r) / 2);
+        mergeSort(array, l, m, steps);
+        mergeSort(array, m + 1, r, steps);
+        merge(array, l, m, r, steps);
+    }
+}
+
+function merge(array, l, m, r, steps) {
+    const n1 = m - l + 1;
+    const n2 = r - m;
+    const L = new Array(n1);
+    const R = new Array(n2);
+
+    for (let i = 0; i < n1; i++) L[i] = array[l + i];
+    for (let j = 0; j < n2; j++) R[j] = array[m + 1 + j];
+
+    let i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            array[k] = L[i];
+            i++;
+        } else {
+            array[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        array[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        array[k] = R[j];
+        j++;
+        k++;
+    }
+
+    steps.push([...array]);
+}
+
+function runHeapSort(array) {
+    const steps = [];
+    const n = array.length;
+
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+        heapify(array, n, i, steps);
+    }
+
+    for (let i = n - 1; i > 0; i--) {
+        [array[0], array[i]] = [array[i], array[0]];
+        steps.push([...array]);
+        heapify(array, i, 0, steps);
+    }
+
+    return steps;
+}
+
+function heapify(array, n, i, steps) {
+    let largest = i;
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+
+    if (left < n && array[left] > array[largest]) {
+        largest = left;
+    }
+
+    if (right < n && array[right] > array[largest]) {
+        largest = right;
+    }
+
+    if (largest !== i) {
+        [array[i], array[largest]] = [array[largest], array[i]];
+        steps.push([...array]);
+        heapify(array, n, largest, steps);
+    }
+}
+
 app.post('/run-pathfinding', (req, res) => {
     const { grid, algorithm } = req.body;
     let steps;
@@ -73,150 +212,6 @@ app.post('/run-pathfinding', (req, res) => {
     res.json({ steps });
 });
 
-function runAStar(grid) {
-    const numRows = grid.length;
-    const numCols = grid[0].length;
-
-    const startNode = findNode(grid, 'S');
-    const endNode = findNode(grid, 'E');
-
-    const openSet = [startNode];
-    const closedSet = [];
-    const cameFrom = {};
-    const gScore = createGrid(numRows, numCols, Infinity);
-    const fScore = createGrid(numRows, numCols, Infinity);
-
-    gScore[startNode.row][startNode.col] = 0;
-    fScore[startNode.row][startNode.col] = heuristic(startNode, endNode);
-
-    const steps = [];
-
-    while (openSet.length > 0) {
-        const current = openSet.reduce((lowest, node) => 
-            fScore[node.row][node.col] < fScore[lowest.row][lowest.col] ? node : lowest
-        );
-
-        if (current.row === endNode.row && current.col === endNode.col) {
-            return reconstructPath(cameFrom, current, steps);
-        }
-
-        openSet.splice(openSet.indexOf(current), 1);
-        closedSet.push(current);
-
-        const neighbors = getNeighbors(current, grid);
-        neighbors.forEach(neighbor => {
-            if (closedSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
-                return;
-            }
-
-            const tentativeGScore = gScore[current.row][current.col] + 1;
-
-            if (!openSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
-                openSet.push(neighbor);
-            } else if (tentativeGScore >= gScore[neighbor.row][neighbor.col]) {
-                return;
-            }
-
-            cameFrom[`${neighbor.row},${neighbor.col}`] = current;
-            gScore[neighbor.row][neighbor.col] = tentativeGScore;
-            fScore[neighbor.row][neighbor.col] = gScore[neighbor.row][neighbor.col] + heuristic(neighbor, endNode);
-        });
-
-        steps.push(closedSet.map(node => [node.row, node.col, 'visited']));
-    }
-
-    return []; 
-}
-
-function runDijkstra(grid) {
-    const numRows = grid.length;
-    const numCols = grid[0].length;
-
-    const startNode = findNode(grid, 'S');
-    const endNode = findNode(grid, 'E');
-
-    const openSet = [startNode];
-    const cameFrom = {};
-    const distance = createGrid(numRows, numCols, Infinity);
-
-    distance[startNode.row][startNode.col] = 0;
-
-    const steps = [];
-
-    while (openSet.length > 0) {
-        const current = openSet.reduce((lowest, node) => 
-            distance[node.row][node.col] < distance[lowest.row][lowest.col] ? node : lowest
-        );
-
-        if (current.row === endNode.row && current.col === endNode.col) {
-            return reconstructPath(cameFrom, current, steps);
-        }
-
-        openSet.splice(openSet.indexOf(current), 1);
-
-        const neighbors = getNeighbors(current, grid);
-        neighbors.forEach(neighbor => {
-            const tentativeDistance = distance[current.row][current.col] + 1;
-
-            if (tentativeDistance < distance[neighbor.row][neighbor.col]) {
-                cameFrom[`${neighbor.row},${neighbor.col}`] = current;
-                distance[neighbor.row][neighbor.col] = tentativeDistance;
-
-                if (!openSet.some(node => node.row === neighbor.row && node.col === neighbor.col)) {
-                    openSet.push(neighbor);
-                }
-            }
-        });
-
-        steps.push([[current.row, current.col, 'visited']]);
-    }
-
-    return [];
-}
-
-function findNode(grid, type) {
-    for (let row = 0; row < grid.length; row++) {
-        for (let col = 0; col < grid[0].length; col++) {
-            if (grid[row][col] === type) {
-                return { row, col };
-            }
-        }
-    }
-    return null;
-}
-
-function getNeighbors(node, grid) {
-    const { row, col } = node;
-    const neighbors = [];
-
-    if (row > 0 && grid[row - 1][col] !== 'O') neighbors.push({ row: row - 1, col });
-    if (row < grid.length - 1 && grid[row + 1][col] !== 'O') neighbors.push({ row: row + 1, col });
-    if (col > 0 && grid[row][col - 1] !== 'O') neighbors.push({ row, col: col - 1 });
-    if (col < grid[0].length - 1 && grid[row][col + 1] !== 'O') neighbors.push({ row, col: col + 1 });
-
-    return neighbors;
-}
-
-function heuristic(nodeA, nodeB) {
-    return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
-}
-
-function createGrid(rows, cols, initialValue) {
-    return Array.from({ length: rows }, () => Array(cols).fill(initialValue));
-}
-
-function reconstructPath(cameFrom, current, steps) {
-    const totalPath = [current];
-    while (`${current.row},${current.col}` in cameFrom) {
-        current = cameFrom[`${current.row},${current.col}`];
-        totalPath.push(current);
-    }
-    totalPath.reverse();
-    totalPath.forEach(node => {
-        steps.push([[node.row, node.col, 'path']]);
-    });
-    return steps;
-}
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
