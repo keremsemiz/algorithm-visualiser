@@ -125,3 +125,50 @@ svg {
         background-color:  #121217;
     }
 } 
+
+@media (max-width: 1024px) {
+    .headerholder {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .rightside {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        width: 90%;
+    }
+
+    .headerimage {
+        width: 100%;
+        height: auto;
+    }
+
+    .showcase {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .showcase .left, .showcase .right {
+        width: 100%;
+    }
+
+    .maincard {
+        margin-top: 1rem;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    button {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}
