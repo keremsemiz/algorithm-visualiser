@@ -1,0 +1,15 @@
+{
+  "name": "algowhiz",
+  "version": "2.0.0",
+  "description": "A dynamic algorithm visualizer for sorting and pathfinding algorithms",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "keywords": ["algorithm", "visualizer", "sorting", "pathfinding"],
+  "license": "MIT"
+}
